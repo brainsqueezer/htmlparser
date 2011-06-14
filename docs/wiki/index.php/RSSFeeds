@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- $Id: head.tmpl,v 1.5 2002/12/15 01:30:47 carstenklapp Exp $ -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<meta name="keywords" content="RSSFeeds, PhpWiki" />
+<meta name="description" content="Project name: HTML Parser Project description: HTML Parser is a library, written in Java, which allows you to parse HTML (HTML 4.0 supported). It has been used by people on live projects. Developers appreciate how easy it is to use. The architecture is flexible, allowing you to extend it easily. Developers on project: 16 Project administrators: &amp;#60;a href=&amp;#34;http://sourceforge.net/users/derrickoswald/&amp;#34;&amp;#62;derrickoswald&amp;#60;/a&amp;#62;, &amp;#60;a href=&amp;#34;http://sourceforge.net/users/somik/&amp;#34;&amp;#62;somik&amp;#60;/a&amp;#62; Activity percentile (last week): 98.3413% Most recent daily statistics (24 Jan 2004): Ranking: 251, Activity percentile: 98.34%, Downloadable files: 25615 total downloads to date Most recent daily statistics (24 Jan 2004): Download count: 19 Mailing lists (public): 4 Public mailing lists: htmlparser-developer, htmlparser-announce, htmlparser-user, htmlparser-cvs Discussion forums (public): 2, containing 110 messages Public discussion forums: Open Discussion, Help, htmlparser-user, htmlparser-developer Tracker: Bugs (1 open/158 total) Tracker description: Bug Tracking System Tracker: Support Requests (1 open/20 total) Tracker description: Tech Support Tracking System Tracker: Patches (0 open/0 total) Tracker description: Patch Tracking System Tracker: Feature Requests (2 open/10 total) Tracker description: Feature Request Tracking System CVS (8169 commits/809 adds) Most recent daily statistics (24 Jan 2004): Commit count: 0; Add count: 0 &amp;#60;br&amp;#62;&amp;#60;a href=&amp;#34;http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/htmlparser/&amp;#34;&amp;#62;[Web-based access to repository]&amp;#60;/a&amp;#62;" />
+<meta name="language" content="" />
+<meta name="document-type" content="Public" />
+<meta name="document-rating" content="General" />
+<meta name="generator" content="phpWiki" />
+<meta name="PHPWIKI_VERSION" content="1.3.4" />
+
+<link rel="shortcut icon" href="/wiki/themes/default/images/favicon.ico" />
+<link rel="home" title="HomePage" href="HomePage" />
+<link rel="help" title="HowToUseWiki" href="HowToUseWiki" />
+<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />
+<link rel="author" title="The PhpWiki Programming Team" href="http://phpwiki.sourceforge.net/phpwiki/ThePhpWikiProgrammingTeam" />
+<link rel="search" title="FindPage" href="FindPage" />
+<link rel="alternate" title="View Source: RSSFeeds" href="RSSFeeds?action=viewsource&amp;version=2" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="RecentChanges?format=rss" />
+
+<link rel="bookmark" title="SandBox" href="SandBox" />
+<link rel="bookmark" title="WikiWikiWeb" href="WikiWikiWeb" />
+
+
+
+<link rel="stylesheet" title="MacOSX" type="text/css" charset="iso-8859-1" href="/wiki/themes/MacOSX/MacOSX.css" /><link rel="alternate stylesheet" title="Printer" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-printer.css" media="print, screen" /><link rel="alternate stylesheet" title="Modern" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-modern.css" /><style type="text/css">
+<!--
+body {background-image: url(/wiki/themes/MacOSX/images/bgpaper8.png);}
+-->
+</style>
+<title>PhpWiki - RSSFeeds</title>
+</head>
+<!-- End head -->
+<!-- Begin body -->
+<!-- $Id: body.tmpl,v 1.30 2002/09/02 14:36:58 rurban Exp $ -->
+<body>
+<!-- Begin top -->
+<!-- $Id: top.tmpl,v 1.20 2002/12/15 01:30:47 carstenklapp Exp $ -->
+
+<!-- End top -->
+<!-- Begin browse -->
+<!-- $Id: browse.tmpl,v 1.22 2002/02/19 23:00:26 carstenklapp Exp $ -->
+
+
+<div class="wikitext"><p><b>Parsing RSS Feeds</b></p>
+<p>Out of the box, the parser only understands XML tags that have the same name as
+HTML tags. So this example:</p>
+<pre>
+import org.htmlparser.Parser;
+import org.htmlparser.filters.NodeClassFilter;
+import org.htmlparser.tags.TitleTag;
+import org.htmlparser.util.NodeIterator;
+import org.htmlparser.util.NodeList;
+import org.htmlparser.util.ParserException;
+
+/*
+ *  RSS (RDF Site Summary - formerly called Rich Site Summary) is a method of
+ * describing news or other Web content that is available for "feeding"
+ * (distribution or syndication) from an online publisher to Web users.
+ * RSS is an application of the Extensible Markup Language (XML) that adheres
+ * to the World Wide Web Consortium's Resource Description Framework (RDF).
+ * Originally developed by Netscape for its browser's Netcenter channels,
+ * the RSS specification is now available for anyone to use.
+ */
+public class ResourceDescriptionFrameworkSiteSummary
+{
+    public static void main (String[] args) throws ParserException
+    {
+        Parser parser;
+        NodeList list;
+
+        parser = new Parser ("http://sourceforge.net/export/rss2_sftopstats.php?feed=mostactive_weekly");
+        list = parser.extractAllNodesThatMatch (new NodeClassFilter (TitleTag.class));
+        for (NodeIterator iterator = list.elements (); iterator.hasMoreNodes (); )
+            System.out.println (iterator.nextNode ().toPlainTextString ());
+
+    }
+}</pre>
+<p>Will only find the TITLE tags, which may be what we want:</p>
+<pre>
+Rank 1: Gaim (100% activity)
+Rank 2: Azureus - BitTorrent Client (99.9934% activity)
+Rank 3: eGroupWare: Enterprise Collaboration (99.9867% activity)
+Rank 4: WinMerge (99.9801% activity)
+Rank 5: phpMyAdmin (99.9735% activity)
+Rank 6: guliverkli (99.9668% activity)
+Rank 7: phpGedView (99.9602% activity)
+Rank 8: AMSN (99.9536% activity)
+Rank 9: dotproject (99.9469% activity)
+Rank 10: ScummVM (99.9403% activity)</pre>
+<p>However, with some custom tags defined, it can handle the heirarchy of the XML:</p>
+<pre>
+import org.htmlparser.Node;
+import org.htmlparser.Parser;
+import org.htmlparser.PrototypicalNodeFactory;
+import org.htmlparser.filters.NodeClassFilter;
+import org.htmlparser.tags.CompositeTag;
+import org.htmlparser.tags.Tag;
+import org.htmlparser.tags.TitleTag;
+import org.htmlparser.util.NodeIterator;
+import org.htmlparser.util.NodeList;
+import org.htmlparser.util.ParserException;
+
+/*
+ *  RSS (RDF Site Summary - formerly called Rich Site Summary) is a method of
+ * describing news or other Web content that is available for "feeding"
+ * (distribution or syndication) from an online publisher to Web users.
+ * RSS is an application of the Extensible Markup Language (XML) that adheres
+ * to the World Wide Web Consortium's Resource Description Framework (RDF).
+ * Originally developed by Netscape for its browser's Netcenter channels,
+ * the RSS specification is now available for anyone to use.
+ */
+class Item        extends CompositeTag { public String[] getIds () { return (new String[] { "ITEM" }); } }
+class Title       extends CompositeTag { public String[] getIds () { return (new String[] { "TITLE" }); } }
+class Description extends CompositeTag { public String[] getIds () { return (new String[] { "DESCRIPTION" }); } }
+class Link        extends CompositeTag { public String[] getIds () { return (new String[] { "LINK" }); } }
+class Guid        extends CompositeTag { public String[] getIds () { return (new String[] { "GUID" }); } }
+class PubDate     extends CompositeTag { public String[] getIds () { return (new String[] { "PUBDATE" }); } }
+
+public class ResourceDescriptionFrameworkSiteSummary
+{
+    public static void main (String[] args) throws ParserException
+    {
+        Parser parser;
+        PrototypicalNodeFactory factory;
+        NodeList list;
+        Item item;
+        NodeList kids;
+        Node node;
+        Tag tag;
+        String name;
+
+        parser = new Parser ("http://sourceforge.net/export/rss2_projsummary.php?group_id=24399");
+        factory = new PrototypicalNodeFactory (true); // empty
+        factory.registerTag (new Item ());
+        factory.registerTag (new Title ());
+        factory.registerTag (new Description ());
+        factory.registerTag (new Link ());
+        factory.registerTag (new Guid ());
+        factory.registerTag (new PubDate ());
+        parser.setNodeFactory (factory);
+        list = parser.extractAllNodesThatMatch (new NodeClassFilter (Item.class));
+        for (NodeIterator iterator = list.elements (); iterator.hasMoreNodes (); )
+        {
+            item = (Item)iterator.nextNode ();
+            kids = item.getChildren ();
+            if (null != kids)
+                for (int i = 0; i &lt; kids.size (); i++)
+                {
+                    node = kids.elementAt (i);
+                    if (node instanceof Tag)
+                    {
+                        tag = (Tag)node;
+                        name = tag.getTagName ();
+                        if (name.equals ("TITLE") || name.equals ("DESCRIPTION"))
+                            System.out.println (tag.toPlainTextString ());
+                    }
+                }
+        }
+    }
+}</pre>
+<p>This isn't as pretty as it could be, but you get the idea:</p>
+<pre>
+Project name: HTML Parser
+Project description: HTML Parser is a library, written in Java, which allows you to parse HTML (HTML 4.0 supported).
+It has been used by people on live projects. Developers appreciate how easy it is to use. The architecture is flexible, allowing you to extend it easily.
+Developers on project: 16
+Project administrators: &amp;#60;a href=&amp;#34;http://sourceforge.net/users/derrickoswald/&amp;#34;&amp;#62;derrickoswald&amp;#60;/a&amp;#62;, &amp;#60;a href=&amp;#34;http://sourceforge.net/users/somik/&amp;#34;&amp;#62;somik&amp;#60;/a&amp;#62;
+Activity percentile (last week): 98.3413%
+Most recent daily statistics (24 Jan 2004): Ranking: 251, Activity percentile: 98.34%,
+Downloadable files: 25615 total downloads to date
+Most recent daily statistics (24 Jan 2004): Download count: 19
+Mailing lists (public): 4
+Public mailing lists: htmlparser-developer, htmlparser-announce, htmlparser-user, htmlparser-cvs
+Discussion forums (public): 2, containing 110 messages
+Public discussion forums: Open Discussion, Help, htmlparser-user, htmlparser-developer
+Tracker: Bugs (1 open/158 total)
+Tracker description: Bug Tracking System
+Tracker: Support Requests (1 open/20 total)
+Tracker description: Tech Support Tracking System
+Tracker: Patches (0 open/0 total)
+Tracker description: Patch Tracking System
+Tracker: Feature Requests (2 open/10 total)
+Tracker description: Feature Request Tracking System
+CVS (8169 commits/809 adds)
+Most recent daily statistics (24 Jan 2004): Commit count: 0; Add count: 0 &amp;#60;br&amp;#62;&amp;#60;a href=&amp;#34;http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/htmlparser/&amp;#34;&amp;#62;[Web-based access to repository]&amp;#60;/a&amp;#62;</pre>
+</div>
+
+
+<!-- End browse -->
+<!-- Begin bottom -->
+<!-- $Id: bottom.tmpl,v 1.3 2002/09/15 20:21:16 rurban Exp $ -->
+<!-- Add your Disclaimer here -->
+<!-- Begin debug -->
+<!-- $Id: debug.tmpl,v 1.9 2002/09/17 02:10:33 dairiki Exp $ -->
+<table width="%100" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+
+</td><td>
+<span class="debug">Page Execution took 0.302 seconds</span>
+</td></tr></table>
+<!-- This keeps the valid XHTML! icons from "hanging off the bottom of the scree" -->
+<br style="clear: both;" />
+<!-- End debug -->
+<!-- End bottom -->
+</body>
+<!-- End body -->
+<!-- phpwiki source:
+$Id: prepend.php,v 1.13 2002/09/18 19:23:25 dairiki Exp $
+$Id: ErrorManager.php,v 1.16 2002/09/14 22:23:36 dairiki Exp $
+$Id: HtmlElement.php,v 1.27 2002/10/31 03:28:30 carstenklapp Exp $
+$Id: XmlElement.php,v 1.17 2002/08/17 15:52:51 rurban Exp $
+$Id: WikiCallback.php,v 1.2 2001/11/21 20:01:52 dairiki Exp $
+$Id: index.php,v 1.99 2002/12/31 01:13:14 wainstead Exp $
+$Id: main.php,v 1.90 2002/11/19 07:07:37 carstenklapp Exp $
+$Id: config.php,v 1.68 2002/11/14 22:28:03 carstenklapp Exp $
+$Id: FileFinder.php,v 1.11 2002/09/18 18:34:13 dairiki Exp $
+$Id: Request.php,v 1.24 2002/12/14 16:21:46 dairiki Exp $
+$Id: WikiUser.php,v 1.29 2002/11/19 07:07:38 carstenklapp Exp $
+$Id: WikiDB.php,v 1.17 2002/09/15 03:56:22 dairiki Exp $
+$Id: SQL.php,v 1.2 2001/09/19 03:24:36 wainstead Exp $
+$Id: mysql.php,v 1.3 2001/12/08 16:02:35 dairiki Exp $
+$Id: PearDB.php,v 1.28 2002/09/12 11:45:33 rurban Exp $
+$Id: backend.php,v 1.3 2002/01/10 23:32:04 carstenklapp Exp $
+$Id: DB.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: DB.php,v 1.13 2002/07/02 15:19:49 cox Exp
+$Id: PEAR.php,v 1.1 2002/01/28 04:01:56 dairiki Exp $
+From Pear CVS: Id: PEAR.php,v 1.29 2001/12/15 15:01:35 mj Exp
+$Id: mysql.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: mysql.php,v 1.5 2002/06/19 00:41:06 cox Exp
+$Id: common.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: common.php,v 1.8 2002/06/12 15:03:16 fab Exp
+$Id: themeinfo.php,v 1.46 2002/03/08 20:31:14 carstenklapp Exp $
+$Id: Theme.php,v 1.58 2002/10/12 08:55:03 carstenklapp Exp $
+$Id: display.php,v 1.38 2002/09/15 20:17:58 rurban Exp $
+$Id: Template.php,v 1.46 2002/09/15 15:05:47 rurban Exp $
+$Id: WikiPlugin.php,v 1.27 2002/11/04 03:15:59 carstenklapp Exp $
+$Id: BlockParser.php,v 1.29 2002/11/25 22:25:49 dairiki Exp $
+$Id: InlineParser.php,v 1.19 2002/11/25 22:51:37 dairiki Exp $
+$Id: interwiki.php,v 1.23 2002/10/06 16:45:10 dairiki Exp $
+$Id: PageType.php,v 1.13 2002/09/04 20:39:47 dairiki Exp $
+-->
+</html>

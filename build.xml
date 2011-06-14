@@ -1,0 +1,552 @@
+<!--
+Build Procedure
+- cd htmlparser
+- 'ant jar' generates new htmlparser.jar and htmllexer.jar in htmlparser/lib
+
+Release Procedure
+- cd htmlparser
+- set environment variables CVSROOT and CVS_RSH (see changelog task)
+- 'ant changelog' generates htmlparser/ChangeLog (this will be changed to use the previous version tag someday)
+- edit the ChangeLog to exclude changes already incorporated - the CVS date spec
+  is only accurate to the day since it comes from the version coded in the
+  Parser.java file, that's why this step can't be automated
+- incorporate changes from ChangeLog into htmlparser/docs/changes.txt under
+  a heading like "Integration Build 1.5 - 20040522"
+- 'ant versionSource' updates the version in Parser.java, Lexer.java and release.txt
+- edit docs/release.txt to update changes since the last version, bugs fixed
+  and enhancements completed
+- perform a CVS update on htmlparser/ to identify new and changed files
+- commit changed files (i.e. Parser.java, docs/release.txt, docs/changes.txt,
+  and lexer/Lexer.java) to the head revision using a reason of the form:
+    Update version to 1.5-20040522.
+- use CVS to tag the current head revisions with a name like v1_5_20040522.
+- use CVS to checkout everything with the tag created above
+- 'ant test' compiles and runs the unit tests
+- 'ant clean htmlparser' creates the jar file and doc files and zips
+  everything into a file htmlparser/distribution/htmlparser1_5_20040522.zip
+- use CVS to checkout everything against the head revision to reset your workspace
+
+Sourceforge File Release Procedure
+- upload the zip file to the sourceforge site
+    $ ftp upload.sourceforge.net
+    Name: anonymous
+    Password: yourname@users.sourceforge.org
+    ftp> cd incoming
+    ftp> bin
+    ftp> put htmlparser1_5_20040522.zip
+    ftp> bye
+- add a release to the 'Integation Builds' package
+    Admin-File Releases-Add Release, use a name of the form '1_5_20040522'
+- Step 1, 'Paste The Notes' (using numeric character references and
+  character entity references because this is displayed as HTML) with a
+  format like :
+    Integration build.
+    Failing Unit Tests:
+    Open Bugs:
+    Pending Bugs:
+- use the 'Upload Change Log:' field to specify the ChamgeLog file you edited
+- Step 2, check the checkbox of the htmlparser1_5_20040522.zip file from the
+  list of files in the uploads section
+- Submit/Refresh
+- Step 3, mark the zip file Processor-Independent, and give it a .zip type
+- Update/Refresh
+- Step 4, check the 'I'm sure' checkbox
+- Send Notice
+- go back to Admin-File Releases-Edit Release, choose the previous release
+  and mark it as hidden
+- Submit/Refresh
+
+Submit News
+- from the project summary screen, select 'Submit News' and title it like:
+    HTML Parser Integration Release 1.5-20040522 
+- type in a summary of the changes made
+- SUBMIT
+- delete the previous release news item using Admin-Publicity-Administrate project news
+- choose the old news item, change the Status to 'Delete'
+- SUBMIT
+
+Update the Web Site
+- create a tarball of the docs directory
+    tar -tf docs.tar
+- use secure copy to move the tarball onto the shell.sourceforge.net server
+    scp docs.tar derrickoswald@shell.sourceforge.net:/home/groups/h/ht/htmlparser/
+- ssh into the shell.sourceforge.net server and cd to /home/groups/h/ht/htmlparser/
+    ssh derrickoswald@shell.sourceforge.net
+- move the old htdocs out of the way
+    mv htdocs oldhtdocs
+- create a new htdocs directory
+    mkdir htdocs
+- unpack the tarball into htdocs
+    cd htdocs
+    tar -xf docs.tar
+- copy or move the following files/directories from the old htdocs to the new one:
+    mv ../olddocs/benchmarks.zip .
+    mv ../olddocs/HTMLParser_Coverage.html .
+    mv ../olddocs/javadoc_1_2 .
+    mv ../olddocs/javadoc_1_3 .
+    mv ../olddocs/performance .
+    mv ../olddocs/test .
+- delete the old htmldocs directory
+    rm -rf ../oldhtdocs
+
+-->
+
+<project name="HTMLParser" default="htmlparser" basedir=".">
+
+  <!-- set global properties for this build -->
+  <!--
+       Note: These can be overridden on the command line, as in:
+       ant -DversionMinor=5 -DversionType=Release\ Build versionSource
+  -->
+  <property name="versionMajor" value="1"/>
+  <property name="versionMinor" value="6"/>
+  <property name="versionType" value="Integration Build"/>
+  <property name="versionNumber" value="${versionMajor}.${versionMinor}"/>
+  <property name="versionQualifier" value="${versionMajor}_${versionMinor}"/>
+  <property name="src" value="src"/>
+  <property name="classes" value="${src}"/>
+  <property name="docs" value="docs"/>
+  <property name="bin" value="bin"/>
+  <property name="lib" value="lib"/>
+  <property name="resources" value="resources"/>
+  <property name="distribution" value="distribution"/>
+  <property name="junit.jar" value="${lib}/junit.jar"/>
+  <property name="sax2.jar" value="${lib}/sax2.jar"/>
+  <property name="check" value="*.java"/>
+  <available property="checkstyle_present" file="${lib}/checkstyle.jar"/>
+  <available property="fit_present" file="${lib}/fit.jar"/>
+
+  <target name="fetch_checkstyle" description="gets the checkstyle jar file"
+      unless="checkstyle_present">
+    <get dest="${lib}/checkstyle_distribution.zip" usetimestamp="true"
+      ignoreerrors="true" verbose="true"
+      src="http://heanet.dl.sourceforge.net/sourceforge/checkstyle/checkstyle-3.5.zip"/>  
+    <unzip src="${lib}/checkstyle_distribution.zip" dest="${lib}/">
+       <patternset>
+         <include name="**/checkstyle-all*.jar"/>
+       </patternset>
+    </unzip>
+    <delete file="${lib}/checkstyle_distribution.zip"/>
+    <move tofile="${lib}/checkstyle.jar">
+        <fileset dir="${lib}" includes="**/checkstyle-all*.jar"/>
+    </move>
+    <delete includeEmptyDirs="true">
+        <fileset dir="${lib}" includes="**/checkstyle-*"/>
+    </delete>
+  </target>
+
+  <target name="checkstyle" depends="fetch_checkstyle"
+      description="check source code adheres to coding standards">
+    <taskdef resource="checkstyletask.properties"
+             classpath="${lib}/checkstyle.jar"/>
+    <checkstyle config="${resources}/htmlparser_checks.xml">
+      <fileset dir="src" includes="**/${check}"/>
+    </checkstyle>
+  </target>
+
+  <target name="fetch_fit" description="gets the fit jar file"
+      unless="fit_present">
+    <get dest="${lib}/fit_distribution.zip" usetimestamp="true"
+      ignoreerrors="true" verbose="true"
+      src="http://puzzle.dl.sourceforge.net/sourceforge/fit/fit-java-1.1.zip"/>  
+    <unzip src="${lib}/fit_distribution.zip" dest="${lib}/">
+       <patternset>
+         <include name="**/fit.jar"/>
+       </patternset>
+    </unzip>
+    <delete file="${lib}/fit_distribution.zip"/>
+  </target>
+
+  <target name="JDK_OK">
+      <condition property="JDK1.4">
+        <or>
+          <equals arg1="1.4" arg2="${ant.java.version}"/>
+          <equals arg1="1.5" arg2="${ant.java.version}"/>
+        </or>
+      </condition>
+      <condition property="JDK1.5">
+        <or>
+          <equals arg1="1.5" arg2="${ant.java.version}"/>
+        </or>
+      </condition>
+  </target>
+
+  <target name="JDK_Warning" unless="JDK_OK">
+    <echo message="***************************************************"/>
+    <echo message="*  WARNING: The detected JDK version is not 1.4!  *"/>
+    <echo message="***************************************************"/>
+  </target>
+  
+  <target name="init" description="initialize version properties">
+    <tstamp>
+      <format property="TODAY" pattern="yyyyMMdd" locale="en"/>
+      <format property="TODAY_STRING" pattern="MMM dd, yyyy"/>
+    </tstamp>
+    <property name="versionTag" value="${versionQualifier}_${TODAY}"/>
+    <echo message="today is ${TODAY_STRING}"/>
+    <echo message="versionTag=${versionTag}"/>
+
+    <!-- retrieve VERSION_XXX properties from Parser.java  -->
+    <loadproperties srcFile="${src}/org/htmlparser/Parser.java">
+      <filterchain>
+        <linecontains>
+          <contains value="VERSION_"/>
+        </linecontains>
+    	<filterreader classname="org.apache.tools.ant.filters.StripLineBreaks">
+          <param name="linebreaks" value=")&quot;"/>
+        </filterreader>
+      </filterchain>
+    </loadproperties>
+
+    <echo message="previous version number = ${VERSION_NUMBER}"/>
+    <echo message="previous version type = ${VERSION_TYPE}"/>
+    <echo message="previous version date = ${VERSION_DATE}"/>
+
+  </target>
+
+  <target name="versionSource" depends="init" description="update the version">
+    <chmod file="${src}/org/htmlparser/Parser.java" perm="u+w"/>
+    <echo message="Replacing version VERSION_NUMBER = ${VERSION_NUMBER} with VERSION_NUMBER = ${versionNumber} in ${src}/org/htmlparser/Parser.java"/>
+    <replace file="${src}/org/htmlparser/Parser.java" token="VERSION_NUMBER = ${VERSION_NUMBER}" value="VERSION_NUMBER = ${versionNumber}"/>
+    <echo message="Replacing version VERSION_TYPE = &quot;${VERSION_TYPE}&quot; with VERSION_TYPE = &quot;${versionType}&quot; in ${src}/org/htmlparser/Parser.java"/>
+    <replace file="${src}/org/htmlparser/Parser.java" token="VERSION_TYPE = &quot;${VERSION_TYPE}&quot;" value="VERSION_TYPE = &quot;${versionType}&quot;"/>
+    <echo message="Replacing version VERSION_DATE = &quot;${VERSION_DATE}&quot; with VERSION_DATE = &quot;${TODAY_STRING}&quot; in ${src}/org/htmlparser/Parser.java"/>
+    <replace file="${src}/org/htmlparser/Parser.java" token="VERSION_DATE = &quot;${VERSION_DATE}&quot;" value="VERSION_DATE = &quot;${TODAY_STRING}&quot;"/>
+
+    <chmod file="${src}/org/htmlparser/lexer/Lexer.java" perm="u+w"/>
+    <echo message="Replacing version VERSION_NUMBER = ${VERSION_NUMBER} with VERSION_NUMBER = ${versionNumber} in ${src}/org/htmlparser/lexer/Lexer.java"/>
+    <replace file="${src}/org/htmlparser/lexer/Lexer.java" token="VERSION_NUMBER = ${VERSION_NUMBER}" value="VERSION_NUMBER = ${versionNumber}"/>
+    <echo message="Replacing version VERSION_TYPE = &quot;${VERSION_TYPE}&quot; with VERSION_TYPE = &quot;${versionType}&quot; in ${src}/org/htmlparser/lexer/Lexer.java"/>
+    <replace file="${src}/org/htmlparser/lexer/Lexer.java" token="VERSION_TYPE = &quot;${VERSION_TYPE}&quot;" value="VERSION_TYPE = &quot;${versionType}&quot;"/>
+    <echo message="Replacing version VERSION_DATE = &quot;${VERSION_DATE}&quot; with VERSION_DATE = &quot;${TODAY_STRING}&quot; in ${src}/org/htmlparser/lexer/Lexer.java"/>
+    <replace file="${src}/org/htmlparser/lexer/Lexer.java" token="VERSION_DATE = &quot;${VERSION_DATE}&quot;" value="VERSION_DATE = &quot;${TODAY_STRING}&quot;"/>
+
+    <chmod file="${docs}/release.txt" perm="u+w"/>
+    <echo message="Replacing version &quot;${VERSION_NUMBER} (${VERSION_TYPE} ${VERSION_DATE})&quot; with &quot;${versionNumber} (${versionType} ${TODAY_STRING})&quot; in ${docs}/release.txt"/>
+    <replace dir="${docs}" value="${versionNumber} (${versionType} ${TODAY_STRING})">
+      <include name="release.txt"/>
+      <replacefilter token="${VERSION_NUMBER} (${VERSION_TYPE} ${VERSION_DATE})"/>
+    </replace>
+
+  </target>
+ 
+  <target name="changelog" depends="init" description="create the change log from CVS logs">
+    <!-- ant has a changelog task already, but it outputs XML and doesn't unify dates or spit them out in chronological order -->
+    <!-- cvschangelog daysinpast="7" destfile="changelog.xml" / -->
+    <!-- so we use cvs2cl instead -->
+    <!--
+      Note: This relies on being able to perform cvs operations to
+      cvs.htmlparser.sorceforge.net by default, so you need to have
+      environment variables CVSROOT and CVS_RSH set up and the ssh-agent
+      loaded and primed.
+      $ ssh-agent
+      $ ssh-add
+      $ CVSROOT=:ext:derrickoswald@cvs.htmlparser.sorceforge.net:/cvsroot/htmlparser
+      $ export CVSROOT
+      $ CVS_RSH=ssh
+      $ export CVS_RSH
+      At this point you should be able to ssh to sourceforge without answering
+      password prompts:
+      $ ssh -l derrickoswald shell.sourceforge.net
+    -->
+    <echo message="${resources}/cvs2cl.pl --no-wrap --separate-header -l &quot;-d'&gt;${VERSION_DATE}'&quot;"/>
+    <exec executable="${resources}/cvs2cl.pl">
+      <arg value="--no-wrap"/>
+      <arg value="--separate-header"/>
+      <arg value="-l"/>
+      <arg value="-d'&gt;${VERSION_DATE}'"/>
+    </exec>
+  </target>
+
+  <target name="compile" description="compile all java files">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" includes="org/htmlparser/**" excludes="org/htmlparser/tests/**" debug="on" classpath="${classes}" source="1.3"/>
+  </target>
+
+  <target name="compilelexer" description="compile lexer java files">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="on" classpath="{classes}" target="1.1" source="1.3">
+      <include name="org/htmlparser/lexer/*.java"/>
+      <include name="org/htmlparser/nodes/*.java"/>
+      <include name="org/htmlparser/Attribute.java"/>
+      <include name="org/htmlparser/Node.java"/>
+      <include name="org/htmlparser/NodeFactory.java"/>
+      <include name="org/htmlparser/NodeFilter.java"/>
+      <include name="org/htmlparser/Remark.java"/>
+      <include name="org/htmlparser/Tag.java"/>
+      <include name="org/htmlparser/Text.java"/>
+      <include name="org/htmlparser/http/ConnectionManager.java"/>
+      <include name="org/htmlparser/http/ConnectionMonitor.java"/>
+      <include name="org/htmlparser/http/Cookie.java"/>
+      <include name="org/htmlparser/util/ParserException.java"/>
+      <include name="org/htmlparser/util/ChainedException.java"/>
+      <include name="org/htmlparser/util/NodeList.java"/>
+      <include name="org/htmlparser/util/NodeIterator.java"/>
+      <include name="org/htmlparser/util/SimpleNodeIterator.java"/>
+      <include name="org/htmlparser/util/sort/**/*.java"/>
+      <include name="org/htmlparser/visitors/NodeVisitor.java"/>
+    </javac>
+  </target>
+
+  <target name="compileparser" depends="compilelexer" description="compile parser java files">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="on" classpath="{classes}:${sax2.jar}" source="1.3">
+      <include name="org/htmlparser/**/*.java"/>
+      <exclude name="org/htmlparser/tests/**"/>
+      <exclude name="org/htmlparser/lexerapplications/**/*.java"/>
+    </javac>
+  </target>
+
+    <!-- Create the htmlparser.jar and htmllexer.jar -->
+  <target name="jar" depends="jarlexer,jarparser" description="create htmlparser.jar and htmllexer.jar"/>
+
+  <!-- Create htmllexer.jar -->
+  <target name="jarlexer" depends="compilelexer" description="create htmllexer.jar">
+    <mkdir dir="${lib}"/>
+    <jar jarfile="${lib}/htmllexer.jar"
+      basedir="${classes}">
+      <include name="org/htmlparser/lexer/*.class"/>
+      <include name="org/htmlparser/nodes/*.class"/>
+      <include name="org/htmlparser/Attribute.class"/>
+      <include name="org/htmlparser/Node.class"/>
+      <include name="org/htmlparser/NodeFactory.class"/>
+      <include name="org/htmlparser/NodeFilter.class"/>
+      <include name="org/htmlparser/Remark.class"/>
+      <include name="org/htmlparser/Tag.class"/>
+      <include name="org/htmlparser/Text.class"/>
+      <include name="org/htmlparser/scanners/Scanner.class"/>
+      <include name="org/htmlparser/scanners/TagScanner.class"/>
+      <include name="org/htmlparser/http/ConnectionManager.class"/>
+      <include name="org/htmlparser/http/ConnectionMonitor.class"/>
+      <include name="org/htmlparser/http/Cookie.class"/>
+      <include name="org/htmlparser/util/ParserException.class"/>
+      <include name="org/htmlparser/util/ChainedException.class"/>
+      <include name="org/htmlparser/util/NodeList*.class"/>
+      <include name="org/htmlparser/util/NodeIterator.class"/>
+      <include name="org/htmlparser/util/SimpleNodeIterator.class"/>
+      <include name="org/htmlparser/util/EncodingChangeException.class"/>
+      <include name="org/htmlparser/util/sort/**/*.class"/>
+      <include name="org/htmlparser/visitors/NodeVisitor.class"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.htmlparser.lexer.Lexer"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <!-- Create htmlparser.jar -->
+  <target name="jarparser" depends="compileparser" description="create htmlparser.jar">
+    <mkdir dir="${lib}"/>
+    <jar jarfile="${lib}/htmlparser.jar">
+      <fileset
+        dir="${classes}"
+        includes="**/*.class"
+        excludes="org/htmlparser/tests/**/*.class"/>
+      <fileset
+        dir="${src}"
+        includes="**/*.gif"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.htmlparser.Parser"/>
+        <section name="org/htmlparser/Parser.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+        <section name="org/htmlparser/beans/StringBean.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+        <section name="org/htmlparser/beans/HTMLTextBean.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+        <section name="org/htmlparser/beans/LinkBean.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+        <section name="org/htmlparser/beans/HTMLLinkBean.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- Create the Thumbelina jar -->
+  <target name="thumbelina" depends="JDK_OK,jarlexer" description="create thumbelina.jar" if="JDK1.5">
+    <!-- Create the lib directory -->
+    <mkdir dir="${lib}"/>
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="on" classpath="${classes}:${lib}/htmllexer.jar" source="1.5">
+      <include name="org/htmlparser/lexerapplications/thumbelina/**/*.java"/>
+    </javac>
+    <jar jarfile="${lib}/thumbelina.jar"
+      basedir="${classes}"
+      defaultexcludes="no"
+      update="true">
+      <include name="org/htmlparser/lexerapplications/thumbelina/**/*.class"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.htmlparser.lexerapplications.thumbelina.Thumbelina"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <!-- Create the FilterBuilder jar -->
+  <target name="filterbuilder" depends="JDK_OK,jarparser" description="create filterbuilder.jar" if="JDK1.4">
+    <!-- Create the lib directory -->
+    <mkdir dir="${lib}"/>
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" debug="on" classpath="${classes}:${lib}/htmlparser.jar" source="1.3">
+      <include name="org/htmlparser/parserapplications/filterbuilder/**/*.java"/>
+    </javac>
+    <jar jarfile="${lib}/filterbuilder.jar"
+        update="true">
+      <fileset
+        dir="${classes}"
+        defaultexcludes="no">
+        <include name="org/htmlparser/parserapplications/filterbuilder/**/*.class"/>
+      </fileset>
+      <fileset
+        dir="${src}"
+        defaultexcludes="no">
+        <include name="org/htmlparser/parserapplications/filterbuilder/**/*.gif"/>
+      </fileset>
+      <manifest>
+        <attribute name="Main-Class" value="org.htmlparser.parserapplications.filterbuilder.FilterBuilder"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <!-- Run the unit tests -->
+  <target name="test" depends="jar" description="run the JUnit tests">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${src}" destdir="${classes}" includes="org/htmlparser/tests/**" debug="on" source="1.3">
+      <classpath>
+        <pathelement location="${classes}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${sax2.jar}"/>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
+      </classpath>
+    </javac>
+    <java classname="org.htmlparser.tests.AllTests" fork="yes" failonerror="yes">
+      <classpath>
+        <pathelement location="${lib}/htmlparser.jar"/>
+        <pathelement location="${classes}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${sax2.jar}"/>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
+      </classpath>
+      <arg value="-text"/>
+    </java>
+  </target>
+
+  <!-- Create the javadoc for the project -->
+  <target name="javadoc" depends="JDK_OK,JDK_Warning,init" description="create JavaDoc (API) documentation">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${resources}" includes="HtmlTaglet.java" classpath="${classes}"/>
+    <mkdir dir="${docs}/javadoc"/>
+    <property name="javadoc.doctitle" value="HTML Parser ${versionNumber}"/>
+    <property name="javadoc.header" value="&lt;A HREF=&quot;http://htmlparser.sourceforge.net&quot; target=&quot;_top&quot;>HTML Parser Home Page&lt;/A>"/>
+    <property name="javadoc.footer" value="&amp;copy; 2005 Derrick Oswald&lt;div align=&quot;right&quot;&gt;${TODAY_STRING}&lt;/div&gt;"/>
+    <property name="javadoc.bottom" value="&lt;table width='100%'&gt;&lt;tr&gt;&lt;td&gt;HTML Parser is an open source library released under
+    &lt;a HREF=&quot;http://www.opensource.org/licenses/lgpl-license.html&quot; target=&quot;_top&quot;&gt;LGPL&lt;/a&gt;.&lt;/td&gt;&lt;td align='right'&gt;
+    &lt;a HREF=&quot;http://sourceforge.net/projects/htmlparser&quot; target=&quot;_top&quot;&gt;
+    &lt;img src=&quot;http://sourceforge.net/sflogo.php?group_id=24399&amp;type=1&quot; width=&quot;88&quot; height=&quot;31&quot; border=&quot;0&quot; alt=&quot;SourceForge.net&quot;&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"/>
+    <javadoc packagenames="org.htmlparser.*"
+           sourcepath="${src}"
+           classpath="${classes}"
+           defaultexcludes="yes"
+           excludepackagenames="org.htmlparser.tests.*"
+           destdir="${docs}/javadoc"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="HTML Parser ${versionNumber}"
+           stylesheetfile="${resources}/stylesheet.css"
+           overview="${src}/doc-files/overview.html">
+      <doctitle>${javadoc.doctitle}</doctitle>
+      <header>${javadoc.header}</header>
+      <bottom>${javadoc.bottom}</bottom>
+      <footer>${javadoc.footer}</footer>
+      <taglet name="HtmlTaglet" path="${resources}:${classes}"/>
+      <group title="Main Package" packages="org.htmlparser"/>
+      <group title="Example Applications" packages="org.htmlparser.parserapplications,org.htmlparser.lexerapplications.tabby,org.htmlparser.lexerapplications.thumbelina,org.htmlparser.parserapplications.filterbuilder*"/>
+      <group title="Nodes" packages="org.htmlparser.nodes,org.htmlparser.tags"/>
+      <group title="Lexer" packages="org.htmlparser.lexer"/>
+      <group title="Scanners" packages="org.htmlparser.scanners"/>
+      <group title="Beans" packages="org.htmlparser.beans"/>
+      <group title="Patterns" packages="org.htmlparser.visitors,org.htmlparser.nodeDecorators,org.htmlparser.filters"/>
+      <group title="Http" packages="org.htmlparser.http"/>
+      <group title="Sax" packages="org.htmlparser.sax"/>
+      <group title="Utility" packages="org.htmlparser.util*"/>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://www.saxproject.org/apidoc/"/>
+    </javadoc>
+    <copy file="${resources}/inherit.gif" tofile="${docs}/javadoc/resources/inherit.gif" overwrite="true"/>
+    <delete file="${resources}/HtmlTaglet.class"/>
+  </target>
+
+    <!-- Create the javadoc for the project -->
+  <target name="checkjavadoc" depends="JDK_OK,JDK_Warning,init" description="create JavaDoc (API) documentation">
+    <mkdir dir="${classes}"/>
+    <javac srcdir="${resources}" includes="HtmlTaglet.java" classpath="${classes}"/>
+    <mkdir dir="${docs}/checkjavadoc"/>
+    <property name="javadoc.doctitle" value="HTML Parser ${versionNumber}"/>
+    <property name="javadoc.header" value="&lt;A HREF=&quot;http://htmlparser.sourceforge.net&quot; target=&quot;_top&quot;>HTML Parser Home Page&lt;/A>"/>
+    <property name="javadoc.footer" value="&amp;copy; 2005 Derrick Oswald&lt;div align=&quot;right&quot;&gt;${TODAY_STRING}&lt;/div&gt;"/>
+    <property name="javadoc.bottom" value="&lt;table width='100%'&gt;&lt;tr&gt;&lt;td&gt;HTML Parser is an open source library released under
+    &lt;a HREF=&quot;http://www.opensource.org/licenses/lgpl-license.html&quot; target=&quot;_top&quot;&gt;LGPL&lt;/a&gt;.&lt;/td&gt;&lt;td align='right'&gt;
+    &lt;a HREF=&quot;http://sourceforge.net/projects/htmlparser&quot; target=&quot;_top&quot;&gt;
+    &lt;img src=&quot;http://sourceforge.net/sflogo.php?group_id=24399&amp;type=1&quot; width=&quot;88&quot; height=&quot;31&quot; border=&quot;0&quot; alt=&quot;SourceForge.net&quot;&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"/>
+    <javadoc doclet="com.sun.tools.doclets.doccheck.DocCheck"
+           docletpath="/home/derrick/htmlparser_cvs/htmlparser/doccheck1.2b2/doccheck.jar"
+           packagenames="org.htmlparser.*"
+           sourcepath="${src}"
+           classpath="${classes}"
+           defaultexcludes="yes"
+           excludepackagenames="org.htmlparser.tests.*"
+           destdir="${docs}/checkjavadoc"
+           author="true"
+           version="true"
+           overview="${src}/doc-files/overview.html">
+    </javadoc>
+    <copy file="${resources}/inherit.gif" tofile="${docs}/javadoc/resources/inherit.gif" overwrite="true"/>
+    <delete file="${resources}/HtmlTaglet.class"/>
+  </target>
+  
+  <target name="release" depends="jar,thumbelina,filterbuilder,javadoc" description="prepare the release files">
+  </target>
+
+  <!-- Create the source zip. -->
+  <target name="sources" description="create the source zip">
+    <zip destfile="src.zip" defaultexcludes="no">
+      <zipfileset dir="${src}" prefix="${src}" includes="**/*.java **/*.html **/*.gif **/*.form **/*.properties"/>
+      <zipfileset dir="." includes="build.xml"/>
+      <zipfileset dir="${resources}" prefix="${resources}" excludes="cvs2cl.pl"/>
+      <zipfileset dir="${resources}" prefix="${resources}" includes="cvs2cl.pl" filemode="755"/>
+    </zip>
+  </target>
+
+  <!-- Perform the htmlparser integration -->
+  <target name="htmlparser" depends="init,release,sources" 
+    description="create distribution zip file">
+    <mkdir dir="${distribution}"/>
+    <fixcrlf srcDir="${docs}" destDir="${distribution}" includes="release.txt" eol="crlf"/>
+    <zip zipfile="${distribution}/htmlparser${versionTag}.zip">
+      <zipfileset dir="${bin}" prefix="htmlparser${versionQualifier}/${bin}" includes="*.bat"/>
+      <zipfileset dir="${bin}" prefix="htmlparser${versionQualifier}/${bin}" includes="*" excludes="*.bat" filemode="755"/>
+      <zipfileset dir="${docs}" prefix="htmlparser${versionQualifier}/${docs}" excludes="samples/**"/>
+      <zipfileset dir="${lib}" prefix="htmlparser${versionQualifier}/${lib}" includes="*.jar" excludes="checkstyle.jar,fit.jar"/>
+      <zipfileset dir="." prefix="htmlparser${versionQualifier}/" includes="src.zip"/>
+      <!-- Copy the release notes as readme.txt in the base release directory -->
+      <zipfileset dir="${distribution}" fullpath="htmlparser${versionQualifier}/readme.txt" includes="release.txt"/>
+      <!-- Copy the LGPL license.txt to the base release directory -->
+      <zipfileset dir="${resources}" includes="license.txt" fullpath="htmlparser${versionQualifier}/license.txt"/>
+    </zip>
+    <delete file="${distribution}/release.txt"/>
+  </target>
+  
+  <target name="clean" description="cleanup">
+    <!-- delete the src.zip, classes and javadocs leave the jars -->
+    <delete>
+      <fileset dir="." includes="src.zip"/>
+      <fileset dir="${classes}" includes="**/*.class"/>
+    </delete>
+    <delete dir="${docs}/javadoc/"/>
+  </target>
+	
+</project>

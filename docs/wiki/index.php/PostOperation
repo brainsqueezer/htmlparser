@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- $Id: head.tmpl,v 1.5 2002/12/15 01:30:47 carstenklapp Exp $ -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<meta name="keywords" content="Post Operation, PhpWiki" />
+<meta name="description" content="The standard HTTP request submitted by the parser is a GET. This note describes how to use POST, which is the usual request submitted by a form." />
+<meta name="language" content="" />
+<meta name="document-type" content="Public" />
+<meta name="document-rating" content="General" />
+<meta name="generator" content="phpWiki" />
+<meta name="PHPWIKI_VERSION" content="1.3.4" />
+
+<link rel="shortcut icon" href="/wiki/themes/default/images/favicon.ico" />
+<link rel="home" title="HomePage" href="HomePage" />
+<link rel="help" title="HowToUseWiki" href="HowToUseWiki" />
+<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />
+<link rel="author" title="The PhpWiki Programming Team" href="http://phpwiki.sourceforge.net/phpwiki/ThePhpWikiProgrammingTeam" />
+<link rel="search" title="FindPage" href="FindPage" />
+<link rel="alternate" title="View Source: PostOperation" href="PostOperation?action=viewsource&amp;version=13" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="RecentChanges?format=rss" />
+
+<link rel="bookmark" title="SandBox" href="SandBox" />
+<link rel="bookmark" title="WikiWikiWeb" href="WikiWikiWeb" />
+
+
+
+<link rel="stylesheet" title="MacOSX" type="text/css" charset="iso-8859-1" href="/wiki/themes/MacOSX/MacOSX.css" /><link rel="alternate stylesheet" title="Printer" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-printer.css" media="print, screen" /><link rel="alternate stylesheet" title="Modern" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-modern.css" /><style type="text/css">
+<!--
+body {background-image: url(/wiki/themes/MacOSX/images/bgpaper8.png);}
+-->
+</style>
+<title>PhpWiki - Post Operation</title>
+</head>
+<!-- End head -->
+<!-- Begin body -->
+<!-- $Id: body.tmpl,v 1.30 2002/09/02 14:36:58 rurban Exp $ -->
+<body>
+<!-- Begin top -->
+<!-- $Id: top.tmpl,v 1.20 2002/12/15 01:30:47 carstenklapp Exp $ -->
+
+<!-- End top -->
+<!-- Begin browse -->
+<!-- $Id: browse.tmpl,v 1.22 2002/02/19 23:00:26 carstenklapp Exp $ -->
+
+
+<div class="wikitext"><h4>POST Operation</h4>
+<p>The standard HTTP request submitted by the parser is a GET. This note describes how to use POST, which is the usual request submitted by a form.</p>
+<p>As an example, we'll submit a form to the U.S. postal service web site.<br />
+<i>Note: This is suboptimal, the postal service provides tools for this type of thing: <a href="http://www.uspswebtools.com" class="namedurl"><span style="white-space: nowrap"><img src="../themes/MacOSX/images/http.png" alt="http" class="linkicon" border="0" />http://www.uspswebtools.com</span></a></i><br /></p>
+<p>On the USPS web site, the page <a href="http://www.usps.com/zip4/citytown.htm" class="namedurl"><span style="white-space: nowrap"><img src="../themes/MacOSX/images/http.png" alt="http" class="linkicon" border="0" />http://www.usps.com/zip4/citytown.htm</span></a> has the following FORM that asks for a zip code and returns the cities or towns covered by the zip code (only form elements are shown removing all the formatting markup):</p>
+<pre>
+&lt;form NAME="frmzip" ACTION="zip_response.jsp" METHOD="post" OnSubmit="return validate(frmzip)"&gt;
+&lt;input type="text" id="zipcode" name="zipcode" size="5" maxlength="5" TABINDEX="10"&gt;
+&lt;input TYPE="image" NAME="Submit" SRC="/zip4/images/submit.jpg" BORDER="0" WIDTH="50" HEIGHT="17" ALT="Submit" TABINDEX="11"&gt;</pre>
+<p>From this we determine that the <tt>METHOD</tt> is <tt>POST</tt> and the form should be submitted to <tt>zip_response.jsp</tt>. This relative URL is relative to the page it is found on, so the form should be submitted to <tt>http://www.usps.com/zip4/zip_response.jsp</tt> when the <tt>Submit</tt> input is clicked. The only <tt>input</tt> element other than the <tt>Submit</tt> is a single <tt>text</tt> field that takes 5 or fewer characters. Other types of input element are described in <a href="http://www.w3.org/TR/html4/interact/forms.html" class="namedurl"><span style="white-space: nowrap"><img src="../themes/MacOSX/images/http.png" alt="http" class="linkicon" border="0" />http://www.w3.org/TR/html4/interact/forms.html</span></a>.</p>
+<p>The basic operation is to pass a fully prepared <tt>HttpURLConnection</tt> connected to the <tt>POST</tt> target URL into the <tt>Parser</tt>, either in the constructor or via the <tt>setConnection()</tt> method. To condition the connection, use the <tt>setRequestMethod()</tt> method to set the <tt>POST</tt> operation, and the <tt>setRequestProperty()</tt> and other explicit method calls. Then write the input fields as an ampersand concatenation (<tt>"input1=value1&amp;input2=value2&amp;..."</tt>) into the <tt>PrintWriter</tt> obtained by a call to <tt>getOutputStream()</tt>.</p>
+<p>The following sample program illustrates the principles using a <tt>StringBean</tt>, but the same code could be used with a <tt>Parser</tt> by replacing the last three lines in the <tt>try</tt> block with:</p>
+<pre>
+        parser = new Parser ();
+        parser.setConnection (connection);
+        // ... do parser operations</pre>
+<p><a href="http://htmlparser.sourceforge.net/images/Zip.java" class="namedurl"><span style="white-space: nowrap"><img src="../themes/MacOSX/images/http.png" alt="http" class="linkicon" border="0" />Source</span> Code.</a> <a href="http://htmlparser.sourceforge.net/images/Zip.html" class="namedurl"><span style="white-space: nowrap"><img src="../themes/MacOSX/images/http.png" alt="http" class="linkicon" border="0" />Pretty</span> Print Source Code</a></p>
+<pre>
+/*
+ * Zip.java
+ * POST zip code to look up cities.
+ *
+ * Created on April 20, 2003, 11:09 PM
+ */
+
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+import org.htmlparser.beans.StringBean;
+
+/**
+ * POST zip code to look up cities.
+ * @author Derrick Oswald
+ */
+public class Zip
+{
+    String mText; // text extracted from the response to the POST request
+
+    /**
+     * Creates a new instance of Zip
+     */
+    public Zip (String code)
+    {
+        URL url;
+        HttpURLConnection connection;
+        StringBuffer buffer;
+        PrintWriter out;
+        StringBean bean;
+
+        try
+        {
+            // from the 'action' (relative to the refering page)
+            url = new URL ("http://www.usps.com/zip4/zip_response.jsp");
+            connection = (HttpURLConnection)url.openConnection ();
+            connection.setRequestMethod ("POST");
+
+            connection.setDoOutput (true);
+            connection.setDoInput (true);
+            connection.setUseCaches (false);
+
+            // more or less of these may be required
+            // see Request Header Definitions: http://www.ietf.org/rfc/rfc2616.txt
+            connection.setRequestProperty ("Accept-Charset", "*");
+            connection.setRequestProperty ("Referer", "http://www.usps.com/zip4/citytown.htm");
+            connection.setRequestProperty ("User-Agent", "Zip.java/1.0");
+
+            buffer = new StringBuffer (1024);
+            // 'input' fields separated by ampersands (&amp;)
+            buffer.append ("zipcode=");
+            buffer.append (code);
+            // buffer.append ("&amp;");
+            // etc.
+
+            out = new PrintWriter (connection.getOutputStream ());
+            out.print (buffer);
+            out.close ();
+
+            bean = new StringBean ();
+            bean.setConnection (connection);
+            mText = bean.getStrings ();
+        }
+        catch (Exception e)
+        {
+            mText = e.getMessage ();
+        }
+
+    }
+
+    public String getText ()
+    {
+        return (mText);
+    }
+
+    /**
+     * Program mainline.
+     * @param args The zip code to look up.
+     */
+    public static void main (String[] args)
+    {
+        if (0 &gt;= args.length)
+            System.out.println ("Usage:  java Zip &lt;zipcode&gt;");
+        else
+            System.out.println (new Zip (args[0]).getText ());
+    }
+}</pre>
+</div>
+
+
+<!-- End browse -->
+<!-- Begin bottom -->
+<!-- $Id: bottom.tmpl,v 1.3 2002/09/15 20:21:16 rurban Exp $ -->
+<!-- Add your Disclaimer here -->
+<!-- Begin debug -->
+<!-- $Id: debug.tmpl,v 1.9 2002/09/17 02:10:33 dairiki Exp $ -->
+<table width="%100" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+
+</td><td>
+<span class="debug">Page Execution took 0.413 seconds</span>
+</td></tr></table>
+<!-- This keeps the valid XHTML! icons from "hanging off the bottom of the scree" -->
+<br style="clear: both;" />
+<!-- End debug -->
+<!-- End bottom -->
+</body>
+<!-- End body -->
+<!-- phpwiki source:
+$Id: prepend.php,v 1.13 2002/09/18 19:23:25 dairiki Exp $
+$Id: ErrorManager.php,v 1.16 2002/09/14 22:23:36 dairiki Exp $
+$Id: HtmlElement.php,v 1.27 2002/10/31 03:28:30 carstenklapp Exp $
+$Id: XmlElement.php,v 1.17 2002/08/17 15:52:51 rurban Exp $
+$Id: WikiCallback.php,v 1.2 2001/11/21 20:01:52 dairiki Exp $
+$Id: index.php,v 1.99 2002/12/31 01:13:14 wainstead Exp $
+$Id: main.php,v 1.90 2002/11/19 07:07:37 carstenklapp Exp $
+$Id: config.php,v 1.68 2002/11/14 22:28:03 carstenklapp Exp $
+$Id: FileFinder.php,v 1.11 2002/09/18 18:34:13 dairiki Exp $
+$Id: Request.php,v 1.24 2002/12/14 16:21:46 dairiki Exp $
+$Id: WikiUser.php,v 1.29 2002/11/19 07:07:38 carstenklapp Exp $
+$Id: WikiDB.php,v 1.17 2002/09/15 03:56:22 dairiki Exp $
+$Id: SQL.php,v 1.2 2001/09/19 03:24:36 wainstead Exp $
+$Id: mysql.php,v 1.3 2001/12/08 16:02:35 dairiki Exp $
+$Id: PearDB.php,v 1.28 2002/09/12 11:45:33 rurban Exp $
+$Id: backend.php,v 1.3 2002/01/10 23:32:04 carstenklapp Exp $
+$Id: DB.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: DB.php,v 1.13 2002/07/02 15:19:49 cox Exp
+$Id: PEAR.php,v 1.1 2002/01/28 04:01:56 dairiki Exp $
+From Pear CVS: Id: PEAR.php,v 1.29 2001/12/15 15:01:35 mj Exp
+$Id: mysql.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: mysql.php,v 1.5 2002/06/19 00:41:06 cox Exp
+$Id: common.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: common.php,v 1.8 2002/06/12 15:03:16 fab Exp
+$Id: themeinfo.php,v 1.46 2002/03/08 20:31:14 carstenklapp Exp $
+$Id: Theme.php,v 1.58 2002/10/12 08:55:03 carstenklapp Exp $
+$Id: display.php,v 1.38 2002/09/15 20:17:58 rurban Exp $
+$Id: Template.php,v 1.46 2002/09/15 15:05:47 rurban Exp $
+$Id: WikiPlugin.php,v 1.27 2002/11/04 03:15:59 carstenklapp Exp $
+$Id: BlockParser.php,v 1.29 2002/11/25 22:25:49 dairiki Exp $
+$Id: InlineParser.php,v 1.19 2002/11/25 22:51:37 dairiki Exp $
+$Id: interwiki.php,v 1.23 2002/10/06 16:45:10 dairiki Exp $
+$Id: PageType.php,v 1.13 2002/09/04 20:39:47 dairiki Exp $
+-->
+</html>

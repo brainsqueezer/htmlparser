@@ -1,0 +1,1596 @@
+*******************************************************************************
+* Developers                                                                  *
+*                                                                             *
+* Do not update this change log manually.                                     *
+* Instead, make your commit messages informative, and these will be harvested *
+* at integration time by the cvs2cl.pl script and added here.                 *
+* For details on this script see:                                             *
+*    http://www.red-bean.com/cvs2cl/                                          *
+*                                                                             *
+* For guidelines on what to put in commit messages see:                       *
+*    http://www.red-bean.com/cvs2cl/changelogs.html                           *
+*                                                                             *
+* This file has been trimmed of changes prior to version 1.4. For access to   *
+* earlier change histories, please consult htmlparser.cvs.sorceforge.net.     *
+*                                                                             *
+*******************************************************************************
+
+Release Build 1.6 - 20060610
+--------------------------------
+
+2006-06-10 10:39  derrickoswald
+
+	* docs/faq.html:
+
+	add faq to docs
+	
+2006-06-05 19:53  derrickoswald
+
+	* src/org/htmlparser/tests/InstanceofPerformanceTest.java:
+
+	Remove InstanceofPerformanceTest, no longer needed.
+	
+2006-06-04 15:17  derrickoswald
+
+	* src/org/htmlparser/tests/AllTests.java,
+	src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/tests/tagTests/BodyTagTest.java,
+	src/org/htmlparser/tests/tagTests/FormTagTest.java,
+	src/org/htmlparser/tests/tagTests/LabelTagTest.java,
+	src/org/htmlparser/tests/tagTests/LinkTagTest.java,
+	src/org/htmlparser/tests/tagTests/ObjectCollectionTest.java,
+	build.xml, src/org/htmlparser/Parser.java,
+	src/org/htmlparser/StringNodeFactory.java,
+	src/org/htmlparser/Tag.java,
+	src/org/htmlparser/tests/lexerTests/TagTests.java,
+	src/org/htmlparser/tests/scannersTests/ScriptScannerTest.java,
+	src/org/htmlparser/util/LinkProcessor.java,
+	src/org/htmlparser/util/SpecialHashtable.java,
+	src/org/htmlparser/util/Translate.java,
+	src/org/htmlparser/nodes/TagNode.java,
+	src/org/htmlparser/tags/LinkTag.java:
+
+	Eliminate deprecated classes and methods.
+	Removed nodeDecorator package, StringNodeFactory, LinkProcesor, SpecialHashTable,
+	and methods for linkData, non-Ex Attributes and FindAllNodesThatAre.
+	
+2006-06-01 23:14  derrickoswald
+
+	* src/org/htmlparser/: Parser.java, lexer/Lexer.java,
+	util/NodeTreeWalker.java:
+
+	Fix Javadoc warnings.
+	
+2006-06-01 22:43  derrickoswald
+
+	* src/org/htmlparser/: http/ConnectionManager.java,
+	lexer/Page.java:
+
+	implement RFE #1394144 handle deflate encoding
+	InflaterInputStream needed an additional Inflater argument.
+	
+2006-06-01 21:48  derrickoswald
+
+	* src/org/htmlparser/: http/ConnectionManager.java,
+	http/HttpHeader.java, Parser.java:
+
+	implement RFE #1436082 Follow redirections with cookie processing
+	Use ConnectionManager.setRedirectionProcessingEnabled(true).
+	Probably only useful if combined with ConnectionManager.setCookieProcessingEnabled(true).
+	
+2006-05-30 22:10  derrickoswald
+
+	* src/org/htmlparser/: tests/utilTests/NodeListTest.java,
+	Node.java, nodes/AbstractNode.java, nodes/RemarkNode.java,
+	nodes/TagNode.java, nodes/TextNode.java, tags/CompositeTag.java,
+	tags/ScriptTag.java, util/NodeList.java:
+
+	implement task #93148 toHtml(boolean verbatim)
+	To avoid printing generated end tags use toHtml(true).
+	
+2006-05-29 23:11  derrickoswald
+
+	* src/org/htmlparser/Parser.java:
+
+	Update javadoc for new Parser constructor behaviour.
+	
+2006-05-29 22:53  derrickoswald
+
+	* src/org/htmlparser/Parser.java:
+
+	Allow passing HTML in the Parser constructor.
+	So now it allows HTML, a URL or a file name.
+	
+2006-05-29 21:30  derrickoswald
+
+	* src/org/htmlparser/http/ConnectionManager.java:
+
+	Handle bad cookie names.
+	Traps cookie name problems, but ignores any following cookies.
+	
+2006-05-29 21:07  derrickoswald
+
+	* src/org/htmlparser/: beans/StringBean.java,
+	tests/utilTests/BeanTest.java:
+
+	fix bug#1496863 StringBean collapse() adds extra whitespace
+	Keep collapsing state machine state as member variable.
+
+Integration Build 1.6 - 20060527
+--------------------------------
+2006-05-27 10:36  derrickoswald
+
+	* src/org/htmlparser/: scanners/ScriptScanner.java,
+	tests/scannersTests/ScriptScannerTest.java:
+
+	fix bug #1457371 Script tag consumes too much from document being parsed
+	The default for ScriptScanner.STRICT was set to true.
+	If you want the older, more lax, script parsing, set it to false.
+	
+2006-05-27 10:03  derrickoswald
+
+	* src/org/htmlparser/: nodes/RemarkNode.java,
+	tests/tagTests/FormTagTest.java:
+
+	fix bug #1488951 RemarkNode.toPlainTextString() incorrect behaviour
+	RemarkNode.toPlainTextString() now always returns an empty string
+	if you want the remark text use getText()
+	
+2006-05-27 10:02  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java,
+	tests/FunctionalTests.java, tests/lexerTests/LexerTests.java,
+	tests/parserHelperTests/RemarkNodeParserTest.java:
+
+	fix bug #1345049 HTMLParser should not terminate a comment with --->
+	add static STRICT_REMARKS to Lexer class, which when true follows the specification for remarks
+	
+2006-05-16 05:14  ian_macfarlane
+
+	* src/org/htmlparser/filters/: AndFilter.java, OrFilter.java:
+
+	Incorrect grammar in javadoc. Changed [it's]  to [its].
+	
+2006-05-16 05:11  ian_macfarlane
+
+	* src/org/htmlparser/filters/XorFilter.java:
+
+	New class that does XOR logic (to round out our NOT, AND and OR filters).
+	
+2006-05-16 03:58  ian_macfarlane
+
+	* src/org/htmlparser/filters/: AndFilter.java, OrFilter.java:
+
+	Added constructors to OrFilter/AndFilter that take an array of NodeFilter's.
+	
+2006-04-24 18:12  derrickoswald
+
+	* src/org/htmlparser/Parser.java:
+
+	Fix incorrect example.
+	
+2006-04-23 07:59  derrickoswald
+
+	* src/org/htmlparser/tags/TableHeader.java:
+
+	Change copyright as per request by P.I.M. Schrama
+	
+2006-04-17 20:08  derrickoswald
+
+	* src/org/htmlparser/tests/: lexerTests/KitTest.java,
+	PerformanceTest.java:
+
+	Move non-junit test code to Request For Enhancement (RFE) as attachments.
+	
+2006-04-17 19:45  derrickoswald
+
+	* src/org/htmlparser/tests/: ParserTestCase.java,
+	PerformanceTest.java:
+
+	Fix unit tests.
+	
+2006-04-17 09:53  derrickoswald
+
+	* src/org/htmlparser/tests/: ParserTest.java,
+	lexerTests/LexerTests.java, tagTests/InputTagTest.java,
+	tagTests/TableTagTest.java,
+	utilTests/CharacterTranslationTest.java:
+
+	Fix unit tests. Move failing test cases to downloads on corresponding RFE artifacts.
+	
+2006-04-17 09:51  derrickoswald
+
+	* bin/: translate.cmd, beanybaby.cmd, filterbuilder.cmd, lexer.cmd,
+	linkextractor.cmd, parser.cmd, sitecapturer.cmd,
+	stringextractor.cmd, thumbelina.cmd:
+
+	Allow execution from directory name containing spaces on Windows.
+	
+2006-04-14 18:18  derrickoswald
+
+	* build.xml, src/org/htmlparser/Parser.java,
+	src/org/htmlparser/http/ConnectionManager.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/util/NodeList.java:
+
+	Cleanup to isolate htmllexer jar build.
+	
+2006-04-11 08:03  derrickoswald
+
+	* src/org/htmlparser/tests/: AllTests.java, MemoryTest.java:
+
+	Move failing unit test to RFE as a download.
+	
+2006-04-10 17:38  derrickoswald
+
+	* src/org/htmlparser/lexer/Page.java:
+
+	Fix Bug #1467712 Page#getCharset never works
+	Use Content-Type header field instead of connection's getContentType method.
+	
+2006-04-08 09:33  derrickoswald
+
+	* src/org/htmlparser/tests/utilTests/CharacterTranslationTest.java:
+
+	Typo.
+	
+2006-04-06 20:58  derrickoswald
+
+	* src/org/htmlparser/: lexer/Page.java,
+	tests/lexerTests/PageTests.java:
+
+	Fix Bug #1461473 Relative links starting with ?
+	Added overloaded methods taking boolean 'strict' flag on URL manipulators.
+	Default is loose interpretation like most browsers.
+
+Integration Build 1.6 - 20060319
+--------------------------------
+2006-03-19 19:02  derrickoswald
+
+	* src/org/htmlparser/tests/tagTests/BodyTagTest.java:
+
+	Fix unit test for body tag.
+	
+2006-03-19 17:13  derrickoswald
+
+	* docs/panel.html:
+
+	Fix name of current build.
+	
+2006-03-19 17:03  derrickoswald
+
+	* build.xml, docs/bug.html, docs/panel.html:
+
+	Fix bug #1363500 http://htmlparser.sourceforge.net/bug.html is wrong
+	Take down the wiki.
+	
+2006-03-19 16:26  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java, tags/BodyTag.java:
+
+	Fix bug #1375230 some javascript breaks stringbean
+	Retrace non-conforming end of remark.
+	
+2006-03-19 15:14  derrickoswald
+
+	* src/org/htmlparser/http/: ConnectionManager.java, Cookie.java:
+
+	Fix bug #1376851 Null-valued cookies cause exception
+	Add handling for namewless cookies.
+	
+2006-03-19 13:40  derrickoswald
+
+	* src/org/htmlparser/http/ConnectionManager.java:
+
+	Remove deflate option from default request properties.
+	See RFE #1394144 handle deflate encoding.
+	
+2006-03-19 12:09  derrickoswald
+
+	* src/org/htmlparser/lexer/Page.java:
+
+	Typo.
+	
+2006-03-19 11:11  derrickoswald
+
+	* src/org/htmlparser/lexer/Lexer.java:
+
+	Fix bug #1445795 return as TextNode when processing jsp
+	Handle single and double line comments within jsp nodes.
+	Suggested alteration to handle jsp tags within tag attributes wasn't implemented.
+	
+2006-03-19 10:01  derrickoswald
+
+	* docs/contributors.html,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/tags/ProcessingInstructionTag.java,
+	src/org/htmlparser/tests/lexerTests/LexerTests.java:
+
+	Incorporated patch #1450095 Fix for Bug 1445309 from Trejkaz Xaoza.
+	Addition of code to parse XML processing instructions.
+	
+2006-02-13 09:50  ian_macfarlane
+
+	* src/org/htmlparser/util/NodeTreeWalker.java:
+
+	A utility class to traverse a tree of Node objects using either depth-first or breadth-first tree traversal. Kind of like a NodeIterator for DOM-type trees of Nodes instead of linear sequences of Nodes.
+	
+	Post to the dev mailing list about this on the way.
+	
+2005-11-14 21:09  derrickoswald
+
+	* src/org/htmlparser/: Attribute.java, Node.java, Parser.java,
+	PrototypicalNodeFactory.java, Remark.java, StringNodeFactory.java,
+	Tag.java, Text.java:
+
+	Fix warnings flagged by doccheck.
+	
+2005-11-12 11:44  derrickoswald
+
+	* src/org/htmlparser/tests/: lexerTests/LexerTests.java,
+	tagTests/FormTagTest.java, tagTests/LinkTagTest.java:
+
+	Update tests for addition of Paragraph tag.
+
+Integration Build 1.6 - 20051112
+--------------------------------
+2005-11-12 09:19  derrickoswald
+
+	* src/org/htmlparser/http/ConnectionManager.java,
+	docs/contributors.html,
+	src/org/htmlparser/PrototypicalNodeFactory.java:
+
+	Add cookie processing changes suggested by Marcus Mattern.
+	
+2005-11-04 10:49  ian_macfarlane
+
+	* src/org/htmlparser/nodes/TextNode.java:
+
+	Add method isWhiteSpace to TextNode that returns if the node is nothing
+        but white space (or null) or if it contains some characters.
+	
+2005-11-01 03:55  ian_macfarlane
+
+	* src/org/htmlparser/nodeDecorators/AbstractNodeDecorator.java:
+
+	Add methods first/last child previous/next sibling added to AbstractNode.
+	This is required to enable the project to compile.
+	
+2005-10-31 11:26  ian_macfarlane
+
+	* src/org/htmlparser/: PrototypicalNodeFactory.java,
+	tags/DefinitionList.java, tags/DefinitionListBullet.java,
+	tags/HeadingTag.java, tags/ParagraphTag.java,
+	tags/TableColumn.java, tags/TableHeader.java, tags/TableRow.java:
+
+	Added support for P and h1-h6 tags.
+	Added support for definition list tags (dl, dt, dd).
+	Let table row/column tags know when to close if encounter TBODY/TFOOT/THEAD.
+	
+2005-10-26 18:01  derrickoswald
+
+	* docs/contributors.html, src/org/htmlparser/Node.java,
+	src/org/htmlparser/nodes/AbstractNode.java:
+
+	Incorporate patch #1338534 Support get first/last child, previous/next sibling
+	from  Ian Macfarlane. No unit tests.
+	
+2005-10-24 22:06  derrickoswald
+
+	* src/org/htmlparser/: lexer/Page.java, tags/MetaTag.java:
+
+	Fix bug 1322686 when illegal charset specified
+	Use current source charset as the default if there is already a source.
+	
+2005-10-24 21:26  derrickoswald
+
+	* src/org/htmlparser/lexer/InputStreamSource.java:
+
+	Fixed bug #1334408 Exception occurs based on string length
+	Changed >= test to > to avoid off-by-one error.
+	
+2005-09-25 21:01  derrickoswald
+
+	* build.xml:
+
+	Fix htmlparser target.
+
+Integration Build 1.6 - 20050925
+--------------------------------
+
+2005-09-18 22:35  derrickoswald
+
+	* docs/contributors.html,
+	src/org/htmlparser/lexer/InputStreamSource.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/tests/lexerTests/LexerTests.java:
+
+	Apply patch #1247128 Bug Fix: #1227213 Particular SCRIPT tags close too late
+	from Keiron McCammon.
+	
+2005-09-18 19:40  derrickoswald
+
+	* docs/contributors.html, src/org/htmlparser/beans/FilterBean.java,
+	src/org/htmlparser/filters/LinkRegexFilter.java:
+
+	Add recursive property on FilterBean suggested by Martin Hudson.
+	
+2005-09-18 19:00  derrickoswald
+
+	* docs/contributors.html,
+	src/org/htmlparser/tests/utilTests/NodeListTest.java,
+	src/org/htmlparser/util/NodeList.java:
+
+	Add remove(Node) method and code suggested by Matthew Buckett.
+	
+2005-06-19 21:56  derrickoswald
+
+	* src/org/htmlparser/: http/ConnectionManager.java,
+	lexer/Lexer.java, lexer/Page.java, lexer/Stream.java,
+	tags/CompositeTag.java:
+
+	Optimizations suggested by profiling.
+	Correction to previous drop:
+	-- use extractAllNodesThatmatch to replace searchFor(cls) --
+	
+2005-06-19 08:01  derrickoswald
+
+	* build.xml, src/org/htmlparser/Parser.java,
+	src/org/htmlparser/http/ConnectionManager.java,
+	src/org/htmlparser/http/HttpHeader.java,
+	src/org/htmlparser/http/package.html,
+	src/org/htmlparser/util/NodeList.java:
+
+	Changes to allow compilation of htmllexer.jar by gcj.
+	Move non-JDK1.1 functionality to HttpHeader class.
+	Unhook NodeList from filters by removing searchFor(cls) -
+	use keepAllNodesThatMatch(new NodeClassFilter(cls)) instead.
+	Include classes missing from closure set.
+
+Release Build 1.5 - 20050614
+--------------------------------
+
+2005-05-15 07:49  derrickoswald
+
+	* resources/htmlparser_checks.xml,
+	src/org/htmlparser/Attribute.java,
+	src/org/htmlparser/NodeFactory.java,
+	src/org/htmlparser/NodeFilter.java, src/org/htmlparser/Remark.java,
+	src/org/htmlparser/Tag.java, src/org/htmlparser/Text.java,
+	src/org/htmlparser/beans/BeanyBaby.java,
+	src/org/htmlparser/beans/FilterBean.java,
+	src/org/htmlparser/beans/HTMLLinkBean.java,
+	src/org/htmlparser/beans/HTMLTextBean.java,
+	src/org/htmlparser/beans/LinkBean.java,
+	src/org/htmlparser/beans/StringBean.java,
+	src/org/htmlparser/filters/CssSelectorNodeFilter.java,
+	src/org/htmlparser/filters/HasAttributeFilter.java,
+	src/org/htmlparser/filters/HasChildFilter.java,
+	src/org/htmlparser/filters/HasParentFilter.java,
+	src/org/htmlparser/filters/HasSiblingFilter.java,
+	src/org/htmlparser/filters/IsEqualFilter.java,
+	src/org/htmlparser/filters/LinkRegexFilter.java,
+	src/org/htmlparser/filters/LinkStringFilter.java,
+	src/org/htmlparser/filters/NodeClassFilter.java,
+	src/org/htmlparser/filters/NotFilter.java,
+	src/org/htmlparser/filters/OrFilter.java,
+	src/org/htmlparser/filters/RegexFilter.java,
+	src/org/htmlparser/filters/StringFilter.java,
+	src/org/htmlparser/filters/TagNameFilter.java,
+	src/org/htmlparser/http/ConnectionManager.java,
+	src/org/htmlparser/http/Cookie.java,
+	src/org/htmlparser/lexer/Cursor.java,
+	src/org/htmlparser/lexer/InputStreamSource.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/lexer/Page.java,
+	src/org/htmlparser/lexer/PageAttribute.java,
+	src/org/htmlparser/lexer/PageIndex.java,
+	src/org/htmlparser/lexer/Source.java,
+	src/org/htmlparser/lexer/Stream.java,
+	src/org/htmlparser/lexer/StringSource.java,
+	src/org/htmlparser/scanners/ScriptDecoder.java,
+	src/org/htmlparser/tests/lexerTests/KitTest.java,
+	src/org/htmlparser/tests/lexerTests/LexerTests.java,
+	src/org/htmlparser/tests/lexerTests/PageTests.java,
+	src/org/htmlparser/tests/lexerTests/TagTests.java,
+	src/org/htmlparser/tests/tagTests/InputTagTest.java,
+	src/org/htmlparser/tests/utilTests/SortTest.java,
+	src/org/htmlparser/util/ParserUtils.java:
+
+	Documentation revamp part four.
+	Remove some checkstyle warnings.
+	
+2005-05-13 06:44  derrickoswald
+
+	* docs/contributors.html, src/org/htmlparser/sax/XMLReader.java:
+
+	Add parse(InputSource) suggested by Jamie McCrindle.
+	
+2005-05-10 18:11  derrickoswald
+
+	* src/org/htmlparser/tests/tagTests/SelectTagTest.java:
+
+	Remove Shamil's email address.
+	
+2005-04-24 13:48  derrickoswald
+
+	* build.xml, docs/main.html, lib/checkstyle-all-3.1.jar,
+	lib/fit.jar, resources/htmlparser_checks.xml,
+	src/doc-files/building.html, src/doc-files/overview.html,
+	src/doc-files/using.html, src/org/htmlparser/Node.java,
+	src/org/htmlparser/Parser.java,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/tags/package.html,
+	src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/visitors/NodeVisitor.java:
+
+	Documentation revamp part three.
+	Reworked some JavaDoc descriptions.
+	Added "HTML Parser for dummies" introductory text.
+	Removed checkstyle.jar and fit.jar (and it's cruft).
+	
+2005-04-12 07:27  derrickoswald
+
+	* src/org/htmlparser/: Attribute.java, beans/package.html,
+	lexer/Cursor.java, lexer/InputStreamSource.java, lexer/Lexer.java,
+	lexer/Page.java, lexer/PageAttribute.java, lexer/Source.java,
+	lexer/Stream.java, lexer/StringSource.java, lexer/package.html,
+	lexerapplications/thumbelina/PicturePanel.java,
+	parserapplications/LinkExtractor.java,
+	parserapplications/SiteCapturer.java,
+	parserapplications/StringExtractor.java,
+	parserapplications/WikiCapturer.java,
+	parserapplications/package.html,
+	parserapplications/filterbuilder/Filter.java,
+	parserapplications/filterbuilder/FilterBuilder.java,
+	parserapplications/filterbuilder/HtmlTreeCellRenderer.java,
+	parserapplications/filterbuilder/HtmlTreeModel.java,
+	parserapplications/filterbuilder/SubFilterList.java,
+	parserapplications/filterbuilder/layouts/NullLayoutManager.java,
+	parserapplications/filterbuilder/layouts/VerticalLayoutManager.java,
+	parserapplications/filterbuilder/wrappers/AndFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/HasAttributeFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/HasChildFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/HasParentFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/HasSiblingFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/NodeClassFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/NotFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/OrFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/RegexFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/StringFilterWrapper.java,
+	parserapplications/filterbuilder/wrappers/TagNameFilterWrapper.java,
+	sax/Feedback.java, sax/XMLReader.java:
+
+	Documentation revamp part two.
+	
+2005-04-10 19:20  derrickoswald
+
+	* bin/beanybaby.bat, bin/beanybaby.cmd, bin/filterbuilder.bat,
+	bin/filterbuilder.cmd, bin/lexer.bat, bin/lexer.cmd,
+	bin/linkextractor.bat, bin/linkextractor.cmd, bin/parser.bat,
+	bin/parser.cmd, bin/sitecapturer, bin/sitecapturer.cmd,
+	bin/stringextractor.bat, bin/stringextractor.cmd,
+	bin/thumbelina.bat, bin/thumbelina.cmd, bin/translate.bat,
+	bin/translate.cmd, src/org/htmlparser/Attribute.java,
+	src/org/htmlparser/Node.java, src/org/htmlparser/NodeFactory.java,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/Remark.java,
+	src/org/htmlparser/StringNodeFactory.java,
+	src/org/htmlparser/Tag.java, src/org/htmlparser/Text.java,
+	src/org/htmlparser/beans/BeanyBaby.java,
+	src/org/htmlparser/beans/FilterBean.java,
+	src/org/htmlparser/beans/HTMLLinkBean.java,
+	src/org/htmlparser/beans/HTMLTextBean.java,
+	src/org/htmlparser/beans/LinkBean.java,
+	src/org/htmlparser/beans/StringBean.java,
+	src/org/htmlparser/beans/package.html,
+	src/org/htmlparser/filters/AndFilter.java,
+	src/org/htmlparser/filters/CssSelectorNodeFilter.java,
+	src/org/htmlparser/filters/HasAttributeFilter.java,
+	src/org/htmlparser/filters/HasChildFilter.java,
+	src/org/htmlparser/filters/HasParentFilter.java,
+	src/org/htmlparser/filters/HasSiblingFilter.java,
+	src/org/htmlparser/filters/LinkRegexFilter.java,
+	src/org/htmlparser/filters/LinkStringFilter.java,
+	src/org/htmlparser/filters/NodeClassFilter.java,
+	src/org/htmlparser/filters/NotFilter.java,
+	src/org/htmlparser/filters/OrFilter.java,
+	src/org/htmlparser/filters/RegexFilter.java,
+	src/org/htmlparser/filters/TagNameFilter.java,
+	src/org/htmlparser/http/ConnectionManager.java,
+	src/org/htmlparser/http/ConnectionMonitor.java,
+	src/org/htmlparser/http/Cookie.java,
+	src/org/htmlparser/http/package.html,
+	src/org/htmlparser/nodeDecorators/AbstractNodeDecorator.java,
+	src/org/htmlparser/nodeDecorators/DecodingNode.java,
+	src/org/htmlparser/nodeDecorators/EscapeCharacterRemovingNode.java,
+	src/org/htmlparser/nodeDecorators/NonBreakingSpaceConvertingNode.java,
+	src/org/htmlparser/nodeDecorators/package.html,
+	src/org/htmlparser/nodes/AbstractNode.java,
+	src/org/htmlparser/nodes/RemarkNode.java,
+	src/org/htmlparser/nodes/TagNode.java,
+	src/org/htmlparser/nodes/TextNode.java,
+	src/org/htmlparser/nodes/package.html,
+	src/org/htmlparser/parserapplications/filterbuilder/FilterBuilder.java,
+	src/org/htmlparser/scanners/CompositeTagScanner.java,
+	src/org/htmlparser/tags/BaseHrefTag.java,
+	src/org/htmlparser/tags/BodyTag.java,
+	src/org/htmlparser/tags/CompositeTag.java,
+	src/org/htmlparser/tags/DoctypeTag.java,
+	src/org/htmlparser/tags/FormTag.java,
+	src/org/htmlparser/tags/FrameSetTag.java,
+	src/org/htmlparser/tags/FrameTag.java,
+	src/org/htmlparser/tags/HeadTag.java,
+	src/org/htmlparser/tags/ImageTag.java,
+	src/org/htmlparser/tags/JspTag.java,
+	src/org/htmlparser/tags/LabelTag.java,
+	src/org/htmlparser/tags/LinkTag.java,
+	src/org/htmlparser/tags/MetaTag.java,
+	src/org/htmlparser/tags/OptionTag.java,
+	src/org/htmlparser/tags/ScriptTag.java,
+	src/org/htmlparser/tags/SelectTag.java,
+	src/org/htmlparser/tags/TableRow.java,
+	src/org/htmlparser/tags/TableTag.java,
+	src/org/htmlparser/tags/TextareaTag.java,
+	src/org/htmlparser/tags/TitleTag.java,
+	src/org/htmlparser/tags/package.html,
+	src/org/htmlparser/tests/lexerTests/KitTest.java,
+	src/org/htmlparser/tests/lexerTests/LexerTests.java:
+
+	Documentation revamp part one.
+	Deprecated node decorators.
+	Added doSemanticAction for Text and Comment nodes.
+	Added missing sitecapturer scripts.
+	Fixed DOS batch files to work when called from any location.
+	
+2005-04-06 06:27  derrickoswald
+
+	* build.xml, docs/release.txt, docs/samples.html:
+
+	End user experience issues:
+	remove multiple wiki files in zip
+	fix sample application links
+	change readme.txt to use Windows line endings
+	change copyright date
+	
+2005-04-06 06:20  derrickoswald
+
+	* docs/contributors.html,
+	src/org/htmlparser/filters/LinkRegexFilter.java,
+	src/org/htmlparser/filters/LinkStringFilter.java:
+
+	Add link pattern filters submitted by John Derrick.
+	
+2005-04-04 20:48  derrickoswald
+
+	* src/org/htmlparser/: NodeFilter.java, Parser.java, package.html,
+	parserapplications/SiteCapturer.java:
+
+	Update javadocs.
+	Enable SiteCapturer to handle resource names containing spaces.
+
+Integration Build 1.5 - 20050313
+--------------------------------
+
+2005-03-13 09:51  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java, lexer/Page.java,
+	lexer/Source.java, lexerapplications/tabby/Tabby.java,
+	scanners/ScriptDecoder.java, tests/lexerTests/TagTests.java,
+	util/IteratorImpl.java:
+
+	Bug #1121401 No Parsing with yahoo!
+	By default nio.charset.CharsetDecoder replaces characters it cannot
+	represent in the current encoding with zero, which was the value
+	returned by the page when the Stream reached EOF.
+	This changes the Page return value to (char)Source.EOF (-1) when
+	the end of stream is encountered.
+	
+2005-03-12 16:39  derrickoswald
+
+	* src/org/htmlparser/beans/: BeanyBaby.java, LinkBean.java:
+
+	Fix bean example, stop sharing connections.
+	
+2005-03-12 15:27  derrickoswald
+
+	* build.xml, lib/commons-logging.jar:
+
+	Bug #1018884 'compile' ant task from build.xml messes up ./src directory
+	Added optional "classes" property to build.xml.
+	This directory is where class files are put. It defaults to src.
+	To use:
+	    build -Dclasses=classdir <target>
+	where classdir is a peer directory to src.
+	Removed unused commons-logging.jar while I was in there.
+	
+2005-03-12 12:53  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java,
+	scanners/ScriptScanner.java,
+	tests/scannersTests/ScriptScannerTest.java:
+
+	Add STRICT flag to ScriptScanner to revert to legacy handling of broken ETAGO (</).
+	If STRICT is true, scan according to HTML specification, else if false, scan with
+	quote smart state machine which heuristically yields the correct parse.
+	
+2005-03-12 08:39  derrickoswald
+
+	* src/org/htmlparser/:
+	tests/visitorsTests/UrlModifyingVisitorTest.java,
+	util/NodeList.java:
+
+	RFE #1160345 NodeList.visitAllNodesWith
+	Added visitAllNodesWith to the NodeList class.
+	
+2005-03-12 07:52  derrickoswald
+
+	* src/org/htmlparser/: beans/StringBean.java,
+	tests/utilTests/AllTests.java, tests/utilTests/NonEnglishTest.java:
+
+	Bug #1161137 Non English Character web page
+	Reinitialize the string buffer after encoding change exception processing.
+	
+2005-03-12 06:52  derrickoswald
+
+	* src/org/htmlparser/http/ConnectionManager.java:
+
+	Bug #1160010 NullPointerException in addCookies
+	Add test for null expiry date.
+
+Integration Build 1.5 - 20050306
+--------------------------------
+2005-03-06 21:18  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java, lexer/Page.java,
+	scanners/ScriptScanner.java, scanners/StyleScanner.java,
+	tests/scannersTests/ScriptScannerTest.java:
+
+	Bug #1104627 Parser Crash reading javascript
+	Bug #1024045 StringBean crashes on an URL
+	Bug #1021925 StyleTag with missing linefeed prevents page from parsing
+	Corrected operation with script and style scanners to recognize the ETAGO
+	when parsing CDATA -- see http://www.w3.org/TR/html4/appendix/notes.html#notes-specifying-data.
+	Original solution to bug #741769 ScriptScanner doesn't handle quoted &lt;/script&gt; tags,
+	was erroneous; it should have been recognized as faulty HTML.
+	Several test cases changed to follow this advice:
+	   "Authors should therefore escape "</" within the content."
+	
+2005-03-06 16:46  derrickoswald
+
+	* src/org/htmlparser/: lexer/InputStreamSource.java,
+	tests/lexerTests/LexerTests.java:
+
+	Bug #1044707 mark()/reset() issues
+	Added wrapping with a org.htmlparser.lexer.Stream if markSupported
+    returns false on the InputStream passed to InputStreamSource constructor.
+	Added better error message when reset fails in setEncoding().
+	
+2005-03-04 10:57  derrickoswald
+
+	*
+	src/org/htmlparser/parserapplications/filterbuilder/FilterBuilder.java:
+
+	Bug #1153508 CVS sources do not compile
+	Repaired sources so it would compile with Java 1.4.
+	
+2005-02-14 19:41  derrickoswald
+
+	* src/org/htmlparser/lexer/InputStreamSource.java:
+
+	Bug #1056438 Byte Order Mark
+	Not a solution, just a better error message.
+	
+2005-02-14 18:54  derrickoswald
+
+	* docs/contributors.html:
+
+	Add David Anderson to contributors list.
+	
+2005-02-14 18:49  derrickoswald
+
+	* src/org/htmlparser/parserapplications/SiteCapturer.java:
+
+	Implement suggested change for
+	  bug #1061869 Crashing when trying to capture link to XLS document
+	checking for null from getContentType().
+	
+Integration Build 1.5 - 20050213
+--------------------------------
+2005-02-13 15:49  derrickoswald
+
+	* src/org/htmlparser/parserapplications/filterbuilder/:
+	images/.xvpics/copy.gif, images/.xvpics/cut.gif,
+	images/.xvpics/delete.gif, wrappers/images/.xvpics/AndFilter.gif,
+	wrappers/images/.xvpics/HasAttributeFilter.gif,
+	wrappers/images/.xvpics/HasChildFilter.gif,
+	wrappers/images/.xvpics/HasParentFilter.gif,
+	wrappers/images/.xvpics/HasSiblingFilter.gif,
+	wrappers/images/.xvpics/NodeClassFilter.gif,
+	wrappers/images/.xvpics/NotFilter.gif,
+	wrappers/images/.xvpics/OrFilter.gif,
+	wrappers/images/.xvpics/RegexFilter.gif,
+	wrappers/images/.xvpics/StringFilter.gif,
+	wrappers/images/.xvpics/StringFilter2.gif,
+	wrappers/images/.xvpics/TagNameFilter.gif:
+
+	FilterBuilder remove mistakenly dropped files.
+	
+2005-02-13 15:43  derrickoswald
+
+	* src/org/htmlparser/parserapplications/filterbuilder/:
+	Filter.java, FilterBuilder.java, HtmlTreeCellRenderer.java,
+	HtmlTreeModel.java, SubFilterList.java, images/about.gif,
+	images/copy.gif, images/cut.gif, images/delete.gif, images/new.gif,
+	images/open.gif, images/paste.gif, images/save.gif,
+	wrappers/AndFilterWrapper.java,
+	wrappers/HasAttributeFilterWrapper.java,
+	wrappers/HasChildFilterWrapper.java,
+	wrappers/HasParentFilterWrapper.java,
+	wrappers/HasSiblingFilterWrapper.java,
+	wrappers/NodeClassFilterWrapper.java,
+	wrappers/NotFilterWrapper.java, wrappers/OrFilterWrapper.java,
+	wrappers/RegexFilterWrapper.java,
+	wrappers/StringFilterWrapper.java,
+	wrappers/TagNameFilterWrapper.java, wrappers/images/AndFilter.gif,
+	wrappers/images/HasAttributeFilter.gif,
+	wrappers/images/HasChildFilter.gif,
+	wrappers/images/HasParentFilter.gif,
+	wrappers/images/HasSiblingFilter.gif,
+	wrappers/images/NodeClassFilter.gif, wrappers/images/OrFilter.gif,
+	wrappers/images/RegexFilter.gif, wrappers/images/TagNameFilter.gif,
+	wrappers/images/.xvpics/AndFilter.gif,
+	wrappers/images/.xvpics/HasAttributeFilter.gif,
+	wrappers/images/.xvpics/HasChildFilter.gif,
+	wrappers/images/.xvpics/HasParentFilter.gif,
+	wrappers/images/.xvpics/HasSiblingFilter.gif,
+	wrappers/images/.xvpics/NodeClassFilter.gif,
+	wrappers/images/.xvpics/NotFilter.gif,
+	wrappers/images/.xvpics/OrFilter.gif,
+	wrappers/images/.xvpics/RegexFilter.gif,
+	wrappers/images/.xvpics/StringFilter.gif,
+	wrappers/images/.xvpics/StringFilter2.gif,
+	wrappers/images/.xvpics/TagNameFilter.gif,
+	wrappers/images/NotFilter.gif, wrappers/images/StringFilter.gif,
+	images/.xvpics/delete.gif, images/.xvpics/copy.gif,
+	images/.xvpics/cut.gif, layouts/NullLayoutManager.java,
+	layouts/VerticalLayoutManager.java:
+
+	FilterBuilder
+	
+2005-02-13 15:36  derrickoswald
+
+	* src/org/htmlparser/filters/AndFilter.java,
+	src/org/htmlparser/filters/HasAttributeFilter.java,
+	src/org/htmlparser/filters/HasChildFilter.java,
+	src/org/htmlparser/filters/HasParentFilter.java,
+	src/org/htmlparser/filters/HasSiblingFilter.java,
+	src/org/htmlparser/filters/NodeClassFilter.java,
+	src/org/htmlparser/filters/NotFilter.java,
+	src/org/htmlparser/filters/OrFilter.java,
+	src/org/htmlparser/filters/RegexFilter.java,
+	src/org/htmlparser/filters/StringFilter.java,
+	src/org/htmlparser/filters/TagNameFilter.java,
+	src/org/htmlparser/lexerapplications/thumbelina/Thumbelina.java,
+	src/org/htmlparser/tags/TableRow.java,
+	src/org/htmlparser/tags/TableTag.java,
+	src/org/htmlparser/NodeFilter.java, src/org/htmlparser/Parser.java,
+	bin/filterbuilder, bin/filterbuilder.bat, bin/thumbelina,
+	bin/thumbelina.bat, src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/tests/visitorsTests/HtmlPageTest.java,
+	build.xml, src/org/htmlparser/beans/BeanyBaby.java,
+	src/org/htmlparser/beans/FilterBean.java,
+	src/org/htmlparser/util/NodeList.java:
+
+	FilterBuilder
+
+	Implemented:
+    RFE #1000063    FilterBean
+    Task #93153	    filter builder tool
+	
+2005-01-09 19:43  derrickoswald
+
+	* docs/samples.html:
+
+	Fix link to StringExtractor.
+	
+2004-09-24 19:16  derrickoswald
+
+	* docs/contributors.html:
+
+	Update Alberto's contributor info.
+	
+2004-09-06 13:19  derrickoswald
+
+	* build.xml:
+
+	Provide for building with JDK 1.5 by adding source="1.3" to javac tasks.
+	
+2004-09-06 13:12  derrickoswald
+
+	* src/org/htmlparser/: tags/MetaTag.java, lexer/Page.java,
+	tests/ParserTest.java:
+
+	Incorporate patch #1004985 Page.java, by making getCharset() and findCharset() static.
+	
+2004-09-01 22:28  derrickoswald
+
+	* src/org/htmlparser/tests/scannersTests/JspScannerTest.java,
+	src/org/htmlparser/tests/scannersTests/ScriptScannerTest.java,
+	src/org/htmlparser/Parser.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/lexer/Page.java,
+	src/org/htmlparser/lexerapplications/thumbelina/ThumbelinaFrame.java,
+	src/org/htmlparser/tests/tagTests/ImageTagTest.java,
+	src/org/htmlparser/tests/tagTests/JspTagTest.java,
+	src/org/htmlparser/tests/tagTests/LinkTagTest.java,
+	src/org/htmlparser/tests/tagTests/ScriptTagTest.java,
+	src/org/htmlparser/tests/tagTests/TagTest.java,
+	src/org/htmlparser/http/ConnectionManager.java,
+	src/org/htmlparser/http/ConnectionMonitor.java,
+	src/org/htmlparser/http/Cookie.java,
+	src/org/htmlparser/http/package.html,
+	src/org/htmlparser/tests/parserHelperTests/StringParserTest.java,
+	build.xml,
+	src/org/htmlparser/tests/parserHelperTests/RemarkNodeParserTest.java:
+
+	Implemented:
+	RFE #1017249	HTML Client Doesn't Support Cookies but will follow redirect
+	RFE #1010586	Add support for password protected URL
+	and RFE #1000739	Add support for proxy scenario
+	A new http package is added, the primary class being Connectionmanager which
+	handles proxies, passwords and cookies. Some testing still needed.
+	Also removed some line separator cruft.
+	
+2004-08-27 05:56  anul
+
+	* src/org/htmlparser/tests/utilTests/HTMLParserUtilsTest.java:
+
+	
+	New tests added for:
+	bug fixing and trimAllTags method test.
+	
+2004-08-27 05:54  anul
+
+	* src/org/htmlparser/util/ParserUtils.java:
+
+	
+	Bug fixing and trimAllTags method added.
+	
+2004-08-24 23:36  derrickoswald
+
+	* src/org/htmlparser/: lexer/Page.java, tests/ParserTest.java:
+
+	Fix bug #1005409 Input file not free by parser.
+	Files larger than 16K on Windows can now be explicitly closed with Page.close(),
+	or will be closed when the page is finalized.
+	
+2004-07-31 22:16  derrickoswald
+
+	* src/org/htmlparser/lexer/: Lexer.java, Page.java, PageIndex.java:
+
+	Speed optimizations based on profiling.
+	
+2004-07-31 12:42  derrickoswald
+
+	* src/org/htmlparser/: lexerapplications/thumbelina/Sequencer.java,
+	lexerapplications/thumbelina/Thumbelina.java,
+	lexerapplications/thumbelina/ThumbelinaFrame.java,
+	lexerapplications/thumbelina/TileSet.java, lexer/Cursor.java,
+	lexer/Lexer.java, lexer/Page.java, tests/lexerTests/KitTest.java,
+	tests/lexerTests/PageTests.java, tests/lexerTests/SourceTests.java,
+	tests/lexerTests/TagTests.java, tests/tagTests/FormTagTest.java,
+	tests/tagTests/ImageTagTest.java, tests/tagTests/LinkTagTest.java,
+	tests/tagTests/ObjectCollectionTest.java,
+	tests/tagTests/ScriptTagTest.java,
+	tests/tagTests/TableTagTest.java, tests/tagTests/TagTest.java,
+	scanners/CompositeTagScanner.java, scanners/ScriptScanner.java,
+	scanners/StyleScanner.java,
+	tests/scannersTests/CompositeTagScannerTest.java,
+	tests/utilTests/BeanTest.java,
+	tests/utilTests/CharacterTranslationTest.java,
+	tests/utilTests/SortTest.java, tests/FunctionalTests.java,
+	tests/InstanceofPerformanceTest.java, tests/ParserTest.java,
+	tests/ParserTestCase.java, tests/PerformanceTest.java,
+	tests/visitorsTests/ScriptCommentTest.java,
+	tests/visitorsTests/UrlModifyingVisitorTest.java,
+	util/CommandLine.java, util/IteratorImpl.java, util/NodeList.java,
+	util/Translate.java, filters/HasParentFilter.java,
+	lexerapplications/tabby/Tabby.java, tags/CompositeTag.java,
+	tags/LinkTag.java, tags/TableColumn.java, tags/TableHeader.java,
+	util/CharacterReference.java, util/LinkProcessor.java,
+	util/ParserUtils.java, Attribute.java,
+	PrototypicalNodeFactory.java, nodes/TagNode.java,
+	visitors/UrlModifyingVisitor.java:
+
+	Remove unused variables and other fixes exposed by turning on compiler warnings.
+	
+2004-07-30 21:22  derrickoswald
+
+	* src/org/htmlparser/tests/MemoryTest.java:
+
+	Changed test case MemoryTest.testBigFile () to check for characters recieved, not bytes.
+
+Integration Build 1.5 - 20040728
+--------------------------------
+
+2004-07-28 21:50  derrickoswald
+
+	* src/org/htmlparser/parserapplications/SiteCapturer.java:
+
+	Fix bug #998195 SiteCatpurer just crashed
+	After EncodingChangeException try again with the encoding now set correctly.
+	
+2004-07-28 21:19  derrickoswald
+
+	* src/org/htmlparser/: Parser.java, lexer/Page.java:
+
+	Fix bug #995703 Parser Crash and bug #988846 Linkbean getLinks() segmentation fault
+	by not testing for content type "text/XXX" in Page, but rather issuing a warning when this is
+	discovered by the Parser level.
+	
+2004-07-28 07:38  derrickoswald
+
+	* bin/: beanybaby.bat, lexer.bat, linkextractor.bat, parser.bat,
+	stringextractor.bat, thumbelina, thumbelina.bat:
+
+	Fix batch files.
+	
+2004-07-21 22:22  derrickoswald
+
+	* src/org/htmlparser/: tests/tagTests/LinkTagTest.java,
+	util/NodeList.java:
+
+	Add test case for bug #982175 False Positives on &reg; entity.
+	Not reproducible (version 1.5).
+	
+2004-07-18 17:31  derrickoswald
+
+	* src/: org/htmlparser/tests/scannersTests/ScriptScannerTest.java,
+	org/htmlparser/tags/FormTag.java,
+	org/htmlparser/tests/visitorsTests/ScriptCommentTest.java,
+	org/htmlparser/util/Translate.java, doc-files/overview.html,
+	org/htmlparser/nodes/TagNode.java,
+	org/htmlparser/tests/parserHelperTests/RemarkNodeParserTest.java,
+	org/htmlparser/tests/parserHelperTests/StringParserTest.java,
+	org/htmlparser/tests/tagTests/ImageTagTest.java,
+	org/htmlparser/tests/tagTests/LinkTagTest.java,
+	org/htmlparser/tests/tagTests/ScriptTagTest.java,
+	org/htmlparser/tests/utilTests/AllTests.java,
+	org/htmlparser/PrototypicalNodeFactory.java,
+	org/htmlparser/sax/Feedback.java,
+	org/htmlparser/tests/lexerTests/AttributeTests.java:
+
+	Fix some javadoc warnings.
+	
+2004-07-17 09:45  derrickoswald
+
+	* src/org/htmlparser/: scanners/CompositeTagScanner.java,
+	scanners/ScriptDecoder.java, scanners/ScriptScanner.java,
+	scanners/StyleScanner.java,
+	tests/utilTests/CharacterTranslationTest.java,
+	tests/utilTests/HTMLParserUtilsTest.java,
+	filters/CssSelectorNodeFilter.java, filters/HasParentFilter.java,
+	nodes/AbstractNode.java, nodes/RemarkNode.java, nodes/TagNode.java,
+	nodes/TextNode.java, tags/ImageTag.java, tags/LinkTag.java,
+	tags/TitleTag.java, tests/ParserTestCase.java, Attribute.java,
+	Parser.java, lexer/InputStreamSource.java,
+	tests/lexerTests/AttributeTests.java,
+	tests/scannersTests/ScriptScannerTest.java, util/Translate.java,
+	tests/tagTests/StyleTagTest.java, tests/tagTests/TagTest.java,
+	util/ParserUtils.java:
+
+	Remove unused imports.
+	
+2004-07-13 21:58  derrickoswald
+
+	* build.xml, lib/sax2.jar, src/org/htmlparser/sax/Attributes.java,
+	src/org/htmlparser/sax/Feedback.java,
+	src/org/htmlparser/sax/Locator.java,
+	src/org/htmlparser/sax/XMLReader.java,
+	src/org/htmlparser/sax/package.html,
+	src/org/htmlparser/tests/SAXTest.java:
+
+	Implement rudimentary sax parser.
+	Currently exposes DOM parser via sax project (http://sourceforge.net/projects/sax) interfaces.
+	
+2004-07-12 21:02  derrickoswald
+
+	* src/org/htmlparser/lexer/Page.java, docs/contributors.html:
+
+	Add fix to Page.getContentType() suggested by Manuel Polo.
+	
+2004-07-03 09:56  derrickoswald
+
+	* src/org/htmlparser/: Parser.java, lexer/InputStreamSource.java,
+	lexer/Page.java, lexer/Source.java, lexer/StringSource.java,
+	tests/lexerTests/SourceTests.java, util/ParserUtils.java:
+
+	Further fix to bug #973137 Double-bytes characters are messed after parsing.
+	Created a proper String based source with the encoding only optionally specified.
+	A string is no longer converted to a byte array and then back to characters.
+	
+2004-07-01 21:33  derrickoswald
+
+	* src/org/htmlparser/tests/ParserTestCase.java:
+
+	Fix broken test framework.
+	
+2004-07-01 20:49  derrickoswald
+
+	* build.xml, src/org/htmlparser/Node.java,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/Tag.java,
+	src/org/htmlparser/filters/CssSelectorNodeFilter.java,
+	src/org/htmlparser/filters/HasParentFilter.java,
+	src/org/htmlparser/nodeDecorators/AbstractNodeDecorator.java,
+	src/org/htmlparser/nodes/TagNode.java,
+	src/org/htmlparser/scanners/CompositeTagScanner.java,
+	src/org/htmlparser/scanners/Scanner.java,
+	src/org/htmlparser/scanners/ScriptScanner.java,
+	src/org/htmlparser/scanners/StyleScanner.java,
+	src/org/htmlparser/scanners/TagScanner.java,
+	src/org/htmlparser/tags/AppletTag.java,
+	src/org/htmlparser/tags/BaseHrefTag.java,
+	src/org/htmlparser/tags/CompositeTag.java,
+	src/org/htmlparser/tags/DoctypeTag.java,
+	src/org/htmlparser/tags/FrameTag.java,
+	src/org/htmlparser/tags/ImageTag.java,
+	src/org/htmlparser/tags/InputTag.java,
+	src/org/htmlparser/tags/JspTag.java,
+	src/org/htmlparser/tags/MetaTag.java,
+	src/org/htmlparser/tags/ObjectTag.java,
+	src/org/htmlparser/tags/Tag.java,
+	src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/tests/ParserTestCase.java,
+	src/org/htmlparser/tests/filterTests/FilterTest.java,
+	src/org/htmlparser/tests/lexerTests/AttributeTests.java,
+	src/org/htmlparser/tests/lexerTests/TagTests.java,
+	src/org/htmlparser/tests/parserHelperTests/CompositeTagScannerHelperTest.java,
+	src/org/htmlparser/tests/parserHelperTests/RemarkNodeParserTest.java,
+	src/org/htmlparser/tests/scannersTests/CompositeTagScannerTest.java,
+	src/org/htmlparser/tests/scannersTests/TagScannerTest.java,
+	src/org/htmlparser/tests/tagTests/BaseHrefTagTest.java,
+	src/org/htmlparser/tests/tagTests/BodyTagTest.java,
+	src/org/htmlparser/tests/tagTests/DivTagTest.java,
+	src/org/htmlparser/tests/tagTests/EndTagTest.java,
+	src/org/htmlparser/tests/tagTests/FormTagTest.java,
+	src/org/htmlparser/tests/tagTests/FrameSetTagTest.java,
+	src/org/htmlparser/tests/tagTests/HtmlTagTest.java,
+	src/org/htmlparser/tests/tagTests/JspTagTest.java,
+	src/org/htmlparser/tests/tagTests/LinkTagTest.java,
+	src/org/htmlparser/tests/tagTests/MetaTagTest.java,
+	src/org/htmlparser/tests/tagTests/ObjectCollectionTest.java,
+	src/org/htmlparser/tests/tagTests/SpanTagTest.java,
+	src/org/htmlparser/tests/tagTests/TagTest.java,
+	src/org/htmlparser/tests/tagTests/TitleTagTest.java,
+	src/org/htmlparser/tests/utilTests/CharacterTranslationTest.java,
+	src/org/htmlparser/tests/visitorsTests/TagFindingVisitorTest.java,
+	src/org/htmlparser/util/IteratorImpl.java,
+	src/org/htmlparser/util/ParserUtils.java,
+	src/org/htmlparser/util/PeekingIterator.java,
+	src/org/htmlparser/util/PeekingIteratorImpl.java:
+
+	Part four of a multiphase refactoring.
+	Most internals now use the Tag interface.
+	This interface has been broadened to add set/get scanner and set/get endtag.
+	Removed the org.htmlparser.tags.Tag class and moved the remaining (minor) functionality
+	to the TagNode class. So now tags inherit directly from TagNode or CompositeTag.
+	** NOTE: If you have subclassed org.htmlparser.tags.Tag, use org.htmlparser.nodes.TagNode now.**
+	Removed deprecated methods getTagBegin/getTagEnd and deleted unused classes:
+	PeekingIterator and it's Implementation.
+	
+2004-06-26 07:56  derrickoswald
+
+	* src/org/htmlparser/tests/lexerTests/AttributeTests.java:
+
+	Add test case for bug #979893 Not Parsing all Attributes.
+	Not reproducible.
+	
+2004-06-26 07:25  derrickoswald
+
+	* docs/contributors.html, docs/release.txt,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/tags/ObjectTag.java:
+
+	Incorporate ObjectTag submitted by Enrico Triolo.
+	
+2004-06-15 22:17  derrickoswald
+
+	* src/org/htmlparser/: Parser.java,
+	tests/InstanceofPerformanceTest.java, tests/ParserTestCase.java,
+	tests/lexerTests/TagTests.java,
+	tests/visitorsTests/UrlModifyingVisitorTest.java:
+
+	Fix bug #973137 Double-bytes characters are messed after parsing.
+	Add an encoding parameter to the static createParser() method.
+
+Integration Build 1.5 - 20040613
+--------------------------------
+
+2004-06-13 20:06  derrickoswald
+
+	* src/org/htmlparser/: Node.java, PrototypicalNodeFactory.java,
+	package.html, nodeDecorators/AbstractNodeDecorator.java,
+	nodes/AbstractNode.java, nodes/RemarkNode.java,
+	nodes/TextNode.java, scanners/ScriptScanner.java,
+	scanners/StyleScanner.java, tests/MemoryTest.java:
+
+	Rework PrototypicalNodeFactory to use interfaces.
+	
+2004-06-08 06:20  derrickoswald
+
+	* src/org/htmlparser/: lexer/Page.java,
+	filters/HasParentFilter.java:
+
+	DocComment fix and another getText() signature.
+	
+2004-06-02 21:20  derrickoswald
+
+	* docs/index.html:
+
+	Allow scrolling left panel.
+	
+2004-06-02 21:18  derrickoswald
+
+	* docs/: contributors.html, pics/rsf.gif:
+
+	Add Rodney S. Foley's photo.
+	
+2004-06-02 21:12  derrickoswald
+
+	* resources/logofiles/: htmlparser2in.gif, htmlparser_cmyk.eps,
+	htmlparser_greyscale.eps, htmlparser_pms.eps,
+	htmlparser_rgb_2inch.jpg, htmlparser_rgb_5inch.jpg:
+
+	Full set of logo files from Jon Gillette.
+	
+2004-06-02 18:47  somik
+
+	* src/org/htmlparser/tests/ParserTestCase.java:
+
+	modified to allow usage of assertXmlEquals
+	
+2004-06-02 18:47  somik
+
+	* .cvsignore:
+
+	added .cvsignore
+	
+2004-05-31 21:44  derrickoswald
+
+	* docs/contributors.html:
+
+	Add htmlparser.org reference in Rodney S. Foley's writeup.
+	
+2004-05-31 18:27  derrickoswald
+
+	* docs/: contributors.html, htmlparser.jpg, htmlparserlogo.jpg,
+	panel.html, release.txt:
+
+	New logo from Jon Gillette.
+	
+2004-05-29 21:43  derrickoswald
+
+	* build.xml,
+	src/org/htmlparser/parserapplications/WikiCapturer.java,
+	docs/wiki/index.html, docs/wiki/index.php/Benchmarks,
+	docs/wiki/index.php/BlockFeedback,
+	docs/wiki/index.php/CollectingParameter,
+	docs/wiki/index.php/CompositePattern,
+	docs/wiki/index.php/CustomTagExtraction,
+	docs/wiki/index.php/CustomTagLinks,
+	docs/wiki/index.php/CustomVisitorLinks,
+	docs/wiki/index.php/EmailExtraction,
+	docs/wiki/index.php/EnableFeedback,
+	docs/wiki/index.php/ExternalIterators,
+	docs/wiki/index.php/FactoryMethod,
+	docs/wiki/index.php/FeedbackMechanism,
+	docs/wiki/index.php/FilterLinks,
+	docs/wiki/index.php/FrequentlyAskedQuestions,
+	docs/wiki/index.php/HomePage, docs/wiki/index.php/ImageExtraction,
+	docs/wiki/index.php/InternalIterators,
+	docs/wiki/index.php/IteratorPattern, docs/wiki/index.php/JavaBeans,
+	docs/wiki/index.php/LexerLinks, docs/wiki/index.php/LinkBeanLinks,
+	docs/wiki/index.php/LinkExtraction,
+	docs/wiki/index.php/ParserDesign,
+	docs/wiki/index.php/PatternStories,
+	docs/wiki/index.php/PostOperation, docs/wiki/index.php/RSSFeeds,
+	docs/wiki/index.php/ReverseHtml,
+	docs/wiki/index.php/SamplePrograms,
+	docs/wiki/index.php/SearchingForData,
+	docs/wiki/index.php/SomikRaha, docs/wiki/index.php/StrategyPattern,
+	docs/wiki/index.php/StringExtraction,
+	docs/wiki/index.php/TemplateMethod,
+	docs/wiki/index.php/TestDrivenDevelopment,
+	docs/wiki/index.php/UsingCookiesWithParser,
+	docs/wiki/index.php/VisitorLinks,
+	docs/wiki/index.php/VisitorPattern, docs/wiki/index.php/WebCrawler,
+	docs/wiki/index.php/WebRipper,
+	docs/wiki/index.php/WritingYourOwnScanners,
+	docs/wiki/themes/MacOSX/buttons/uww.png,
+	docs/wiki/themes/MacOSX/buttons/en/BackLinks.png,
+	docs/wiki/themes/MacOSX/buttons/en/DebugInfo.png,
+	docs/wiki/themes/MacOSX/buttons/en/Diff.png,
+	docs/wiki/themes/MacOSX/buttons/en/Edit.png,
+	docs/wiki/themes/MacOSX/buttons/en/FindPage.png,
+	docs/wiki/themes/MacOSX/buttons/en/LikePages.png,
+	docs/wiki/themes/MacOSX/buttons/en/PageHistory.png,
+	docs/wiki/themes/MacOSX/buttons/en/PageInfo.png,
+	docs/wiki/themes/MacOSX/buttons/en/RecentChanges.png,
+	docs/wiki/themes/MacOSX/images/http.png,
+	docs/wiki/themes/MacOSX/images/logo.png,
+	docs/wiki/themes/default/buttons/vcss.gif,
+	docs/wiki/themes/default/buttons/vxhtml10.gif:
+
+	Use WikiCapturer to pull Wiki pages locally.
+	
+2004-05-29 16:40  derrickoswald
+
+	* build.xml, docs/release.txt, resources/license.txt:
+
+	Add LGPL license.txt to the distribution.
+	
+2004-05-29 15:51  derrickoswald
+
+	* build.xml, resources/inherit.gif:
+
+	Fix javadoc inheritance white background GIF.
+	
+2004-05-24 15:36  derrickoswald
+
+	* src/org/htmlparser/: tests/filterTests/FilterTest.java,
+	filters/RegexFilter.java:
+
+	Add regular expression filter.
+	
+2004-05-24 12:31  derrickoswald
+
+	* src/org/htmlparser/: scanners/package.html,
+	tests/lexerTests/AttributeTests.java:
+
+	Fix some files misplaced in last refactoring submission.
+	
+2004-05-24 12:18  derrickoswald
+
+	* build.xml, src/org/htmlparser/AbstractNode.java,
+	src/org/htmlparser/Attribute.java,
+	src/org/htmlparser/NodeFactory.java,
+	src/org/htmlparser/Parser.java,
+	src/org/htmlparser/PrototypicalNodeFactory.java,
+	src/org/htmlparser/Remark.java, src/org/htmlparser/RemarkNode.java,
+	src/org/htmlparser/StringNode.java,
+	src/org/htmlparser/StringNodeFactory.java,
+	src/org/htmlparser/Tag.java, src/org/htmlparser/Text.java,
+	src/org/htmlparser/beans/StringBean.java,
+	src/org/htmlparser/filters/HasAttributeFilter.java,
+	src/org/htmlparser/filters/StringFilter.java,
+	src/org/htmlparser/filters/TagNameFilter.java,
+	src/org/htmlparser/lexer/Lexer.java,
+	src/org/htmlparser/lexer/PageAttribute.java,
+	src/org/htmlparser/lexerapplications/thumbelina/Thumbelina.java,
+	src/org/htmlparser/nodeDecorators/AbstractNodeDecorator.java,
+	src/org/htmlparser/nodeDecorators/DecodingNode.java,
+	src/org/htmlparser/nodeDecorators/EscapeCharacterRemovingNode.java,
+	src/org/htmlparser/nodeDecorators/NonBreakingSpaceConvertingNode.java,
+	src/org/htmlparser/scanners/CompositeTagScanner.java,
+	src/org/htmlparser/scanners/ScriptScanner.java,
+	src/org/htmlparser/scanners/StyleScanner.java,
+	src/org/htmlparser/tags/AppletTag.java,
+	src/org/htmlparser/tags/CompositeTag.java,
+	src/org/htmlparser/tags/ImageTag.java,
+	src/org/htmlparser/tags/MetaTag.java,
+	src/org/htmlparser/tags/Tag.java,
+	src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/tests/ParserTestCase.java,
+	src/org/htmlparser/tests/filterTests/FilterTest.java,
+	src/org/htmlparser/tests/lexerTests/AttributeTests.java,
+	src/org/htmlparser/tests/lexerTests/KitTest.java,
+	src/org/htmlparser/tests/lexerTests/LexerTests.java,
+	src/org/htmlparser/tests/parserHelperTests/RemarkNodeParserTest.java,
+	src/org/htmlparser/tests/parserHelperTests/StringParserTest.java,
+	src/org/htmlparser/tests/scannersTests/CompositeTagScannerTest.java,
+	src/org/htmlparser/tests/tagTests/BulletListTagTest.java,
+	src/org/htmlparser/tests/tagTests/CompositeTagTest.java,
+	src/org/htmlparser/tests/tagTests/FormTagTest.java,
+	src/org/htmlparser/tests/tagTests/ImageTagTest.java,
+	src/org/htmlparser/tests/tagTests/LinkTagTest.java,
+	src/org/htmlparser/tests/tagTests/OptionTagTest.java,
+	src/org/htmlparser/tests/tagTests/StyleTagTest.java,
+	src/org/htmlparser/tests/tagTests/TagTest.java,
+	src/org/htmlparser/tests/utilTests/CharacterTranslationTest.java,
+	src/org/htmlparser/tests/utilTests/HTMLParserUtilsTest.java,
+	src/org/htmlparser/tests/utilTests/NodeListTest.java,
+	src/org/htmlparser/tests/visitorsTests/HtmlPageTest.java,
+	src/org/htmlparser/tests/visitorsTests/NodeVisitorTest.java,
+	src/org/htmlparser/util/ParserUtils.java,
+	src/org/htmlparser/visitors/NodeVisitor.java,
+	src/org/htmlparser/visitors/StringFindingVisitor.java,
+	src/org/htmlparser/visitors/TextExtractingVisitor.java,
+	src/org/htmlparser/visitors/UrlModifyingVisitor.java,
+	src/org/htmlparser/nodes/AbstractNode.java,
+	src/org/htmlparser/nodes/RemarkNode.java,
+	src/org/htmlparser/nodes/TagNode.java,
+	src/org/htmlparser/nodes/TextNode.java,
+	src/org/htmlparser/nodes/package.html:
+
+	Part three of a multiphase refactoring.
+	The three node types are now fronted by interfaces (program to the interface paradigm)
+	with concrete implementations in the new htmlparser.nodes package. Classes from the
+	lexer.nodes package are moved to this package, and obvious references to the concrete
+	classes that got broken by this have been changed to use the interfaces where possible.
+	
+2004-05-23 20:38  derrickoswald
+
+	* src/org/htmlparser/: AbstractNode.java, Node.java,
+	RemarkNode.java, StringNode.java, beans/StringBean.java,
+	filters/StringFilter.java, lexer/Lexer.java,
+	nodeDecorators/AbstractNodeDecorator.java, tags/ImageTag.java,
+	tags/LinkTag.java, tags/Tag.java, tags/TitleTag.java,
+	tests/filterTests/FilterTest.java,
+	tests/lexerTests/LexerTests.java,
+	tests/utilTests/NodeListTest.java,
+	tests/visitorsTests/NodeVisitorTest.java,
+	tests/visitorsTests/ScriptCommentTest.java, visitors/HtmlPage.java,
+	visitors/LinkFindingVisitor.java, visitors/NodeVisitor.java,
+	visitors/ObjectFindingVisitor.java,
+	visitors/TagFindingVisitor.java,
+	visitors/TextExtractingVisitor.java,
+	visitors/UrlModifyingVisitor.java:
+
+	Part two of a multiphase refactoring. Part one added the Tag interface.
+	This submission eliminates some of the duplication between the lexer.nodes package
+	and the htmlparser package by removing the tag specific signatures, visitTitleTag,
+	visitLinkTag and visitImageTag, from the NodeVisitor class. This allows the lexer to
+	return htmlparser level classes for StringNode and RemarkNode. The TagNode is
+	still present in the lexer.nodes package, but will move next.
+	This means that classes derived from NodeVisitor *will not* work using the above
+	signatures; instead a check for tag class (or name) should be performed in visitTag.
+	A document will be added to the visitors package with comprehensive porting instructions.
+	
+2004-05-23 15:42  derrickoswald
+
+	* src/org/htmlparser/lexer/Page.java:
+
+	Incorporate feature request submitted by Bradford A. Folkens
+	#943197 Accept gzip / deflate content encodings
+	by setting request property "Accept-Encoding" to "gzip, deflate" in Page.setConnection(),
+	if possible, and handling those encodings.
+	No test case added because it needs a specially configured HTTP server.
+	
+Integration Build 1.5 - 20040522
+--------------------------------
+
+2004-05-22 07:35  derrickoswald
+
+	* build.xml:
+
+	Change minor version to 5.
+	
+2004-05-22 07:33  derrickoswald
+
+	* src/org/htmlparser/Tag.java:
+
+	Change minor version to 5. Fix doc comment warning.
+	
+2004-05-21 23:57  derrickoswald
+
+	* src/org/htmlparser/: lexer/Lexer.java, tests/AllTests.java,
+	tests/MemoryTest.java,
+	tests/parserHelperTests/StringParserTest.java,
+	tests/scannersTests/ScriptScannerTest.java,
+	tests/tagTests/InputTagTest.java,
+	tests/visitorsTests/AllTests.java,
+	tests/visitorsTests/ScriptCommentTest.java:
+
+	Fix bug# 919738 Text has not been extracted correctly using StringBean
+	and (duplicate) bug #936392 ScriptTag visitor fails for comments with '
+	by handling single and multiline ecmascript comments in the Lexer class
+	when called with quotesmart true.
+	Also added test cases for, but didn't fix bug #923146 tag nesting rule
+	too strict for forms (org.htmlparser.tests.tagTests.InputTagTest.testTable)
+	and bug #922439 OutOfMemory on huge HTML files (4,7MB)
+	(org.htmlparser.tests.MemoryTest) which are thus currently failing.
+	
+2004-05-16 13:59  derrickoswald
+
+	* src/org/htmlparser/:
+	lexerapplications/thumbelina/Thumbelina.java, beans/LinkBean.java,
+	beans/StringBean.java:
+
+	Alter bound property name constants to agree with section
+	8.8 Capitalization of inferred names.
+	in the JavaBeans API specification.
+	
+2004-05-12 10:16  anul
+
+	* src/org/htmlparser/util/ParserUtils.java:
+
+	
+	Added many trim and split methods.
+	
+2004-05-12 10:14  anul
+
+	* src/org/htmlparser/tests/utilTests/HTMLParserUtilsTest.java:
+
+	
+	Added many trim and split functions, here are the tests
+	
+2004-05-10 18:31  derrickoswald
+
+	* src/org/htmlparser/: tests/filterTests/FilterTest.java,
+	filters/CssSelectorNodeFilter.java:
+
+	Add CssSelectorNodeFilter submitted by Rogers George.
+	
+2004-05-07 19:30  derrickoswald
+
+	* src/org/htmlparser/lexer/Page.java:
+
+	Ignore null contentType to accommodate ServletContext.getResource(...) per
+	suggestion by Rogers George.
+	
+2004-04-20 06:54  derrickoswald
+
+	* docs/pics/: alberto.jpg, italy.gif:
+
+	Add images.
+	
+2004-04-20 06:49  derrickoswald
+
+	* docs/contributors.html:
+
+	Add Alberto Nacher to contributors page.
+	
+2004-04-06 06:51  derrickoswald
+
+	* src/org/htmlparser/lexer/nodes/TagNode.java:
+
+	Documentation modifications requested by Leos Literak via htmlparser-user mail list.
+	
+2004-03-20 15:01  derrickoswald
+
+	* build.xml:
+
+	Add Tag interface to htmllexer.jar.
+	
+2004-03-20 12:03  derrickoswald
+
+	* src/org/htmlparser/: PrototypicalNodeFactory.java, Tag.java,
+	lexer/nodes/TagNode.java:
+
+	First pass refactoring.
+	Create Tag interface, which isn't really used yet.
+	
+2004-03-17 23:04  derrickoswald
+
+	* build.xml, src/org/htmlparser/Parser.java,
+	src/org/htmlparser/lexer/Page.java,
+	src/org/htmlparser/tags/BaseHrefTag.java,
+	src/org/htmlparser/tags/FormTag.java,
+	src/org/htmlparser/tags/FrameTag.java,
+	src/org/htmlparser/tags/ImageTag.java,
+	src/org/htmlparser/tags/LinkTag.java,
+	src/org/htmlparser/tests/ParserTest.java,
+	src/org/htmlparser/tests/lexerTests/PageTests.java,
+	src/org/htmlparser/tests/tagTests/BaseHrefTagTest.java,
+	src/org/htmlparser/tests/utilTests/AllTests.java,
+	src/org/htmlparser/tests/utilTests/HTMLLinkProcessorTest.java,
+	src/org/htmlparser/util/LinkProcessor.java:
+
+	Deprecate LinkProcessor.
+	Functionality moved to Page.
+	
+2004-03-15 17:50  derrickoswald
+
+	* src/doc-files/building.html:
+
+	Update build instruction problem identified by sarsie.
+	
+2004-03-14 15:31  derrickoswald
+
+	* build.xml, src/org/htmlparser/lexer/nodes/Attribute.java,
+	src/org/htmlparser/lexer/nodes/TagNode.java:
+
+	Remove requirement for Translate.class to be in htmllexer.jar.

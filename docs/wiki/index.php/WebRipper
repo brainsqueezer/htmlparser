@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- $Id: head.tmpl,v 1.5 2002/12/15 01:30:47 carstenklapp Exp $ -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<meta name="keywords" content="Web Ripper, PhpWiki" />
+<meta name="description" content="A ripper is a program that downloads html content to your hard disk. It involves &lt;b&gt;modifying links and image locations&lt;/b&gt; to point to locations in your hard disk." />
+<meta name="language" content="" />
+<meta name="document-type" content="Public" />
+<meta name="document-rating" content="General" />
+<meta name="generator" content="phpWiki" />
+<meta name="PHPWIKI_VERSION" content="1.3.4" />
+
+<link rel="shortcut icon" href="/wiki/themes/default/images/favicon.ico" />
+<link rel="home" title="HomePage" href="HomePage" />
+<link rel="help" title="HowToUseWiki" href="HowToUseWiki" />
+<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />
+<link rel="author" title="The PhpWiki Programming Team" href="http://phpwiki.sourceforge.net/phpwiki/ThePhpWikiProgrammingTeam" />
+<link rel="search" title="FindPage" href="FindPage" />
+<link rel="alternate" title="View Source: WebRipper" href="WebRipper?action=viewsource&amp;version=2" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="RecentChanges?format=rss" />
+
+<link rel="bookmark" title="SandBox" href="SandBox" />
+<link rel="bookmark" title="WikiWikiWeb" href="WikiWikiWeb" />
+
+
+
+<link rel="stylesheet" title="MacOSX" type="text/css" charset="iso-8859-1" href="/wiki/themes/MacOSX/MacOSX.css" /><link rel="alternate stylesheet" title="Printer" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-printer.css" media="print, screen" /><link rel="alternate stylesheet" title="Modern" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-modern.css" /><style type="text/css">
+<!--
+body {background-image: url(/wiki/themes/MacOSX/images/bgpaper8.png);}
+-->
+</style>
+<title>PhpWiki - Web Ripper</title>
+</head>
+<!-- End head -->
+<!-- Begin body -->
+<!-- $Id: body.tmpl,v 1.30 2002/09/02 14:36:58 rurban Exp $ -->
+<body>
+<!-- Begin top -->
+<!-- $Id: top.tmpl,v 1.20 2002/12/15 01:30:47 carstenklapp Exp $ -->
+
+<!-- End top -->
+<!-- Begin browse -->
+<!-- $Id: browse.tmpl,v 1.22 2002/02/19 23:00:26 carstenklapp Exp $ -->
+
+
+<div class="wikitext"><p><b>Web Ripper</b></p>
+<p>A ripper is a program that downloads html content to your hard disk. It involves <b>modifying links and image locations</b> to point to locations in your hard disk.</p>
+<p>You can write rippers easily with the parser. Here's one way to do it:</p>
+<pre>
+Parser parser = new Parser(..);
+UrlModifyingVisitor visitor = new UrlModifyingVisitor(parser,"c:\\webpages\\mylocation");
+parser.visitAllNodesWith(visitor);
+writeToFile(visitor.getModifiedResult()); // you have to define writeToFile in your app program</pre>
+<p>This visitor simply modifies the links it finds in the page with the prefix you have provided. It then passes back the representation of the page via <i>getModifiedResult()</i>.</p>
+<p>If you're dealing with frames, you might want to enhance this visitor to be able to modify links on the frame tags. In such a case, override visitTag(), and check if the tag is a <span class="wikiunknown"><u>FrameTag</u><a href="FrameTag?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span> (Note, <span class="wikiunknown"><u>UrlModifyingVisitor</u><a href="UrlModifyingVisitor?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span> will register link and image scanners only, so you will need to register the frame scanner seperately). Then, you can proceed to modify the src attribute, use <i>Tag.setAttribute()</i></p>
+<p>--<a href="../index.php/SomikRaha" class="wiki">SomikRaha</a></p>
+</div>
+
+
+<!-- End browse -->
+<!-- Begin bottom -->
+<!-- $Id: bottom.tmpl,v 1.3 2002/09/15 20:21:16 rurban Exp $ -->
+<!-- Add your Disclaimer here -->
+<!-- Begin debug -->
+<!-- $Id: debug.tmpl,v 1.9 2002/09/17 02:10:33 dairiki Exp $ -->
+<table width="%100" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+
+</td><td>
+<span class="debug">Page Execution took 0.261 seconds</span>
+</td></tr></table>
+<!-- This keeps the valid XHTML! icons from "hanging off the bottom of the scree" -->
+<br style="clear: both;" />
+<!-- End debug -->
+<!-- End bottom -->
+</body>
+<!-- End body -->
+<!-- phpwiki source:
+$Id: prepend.php,v 1.13 2002/09/18 19:23:25 dairiki Exp $
+$Id: ErrorManager.php,v 1.16 2002/09/14 22:23:36 dairiki Exp $
+$Id: HtmlElement.php,v 1.27 2002/10/31 03:28:30 carstenklapp Exp $
+$Id: XmlElement.php,v 1.17 2002/08/17 15:52:51 rurban Exp $
+$Id: WikiCallback.php,v 1.2 2001/11/21 20:01:52 dairiki Exp $
+$Id: index.php,v 1.99 2002/12/31 01:13:14 wainstead Exp $
+$Id: main.php,v 1.90 2002/11/19 07:07:37 carstenklapp Exp $
+$Id: config.php,v 1.68 2002/11/14 22:28:03 carstenklapp Exp $
+$Id: FileFinder.php,v 1.11 2002/09/18 18:34:13 dairiki Exp $
+$Id: Request.php,v 1.24 2002/12/14 16:21:46 dairiki Exp $
+$Id: WikiUser.php,v 1.29 2002/11/19 07:07:38 carstenklapp Exp $
+$Id: WikiDB.php,v 1.17 2002/09/15 03:56:22 dairiki Exp $
+$Id: SQL.php,v 1.2 2001/09/19 03:24:36 wainstead Exp $
+$Id: mysql.php,v 1.3 2001/12/08 16:02:35 dairiki Exp $
+$Id: PearDB.php,v 1.28 2002/09/12 11:45:33 rurban Exp $
+$Id: backend.php,v 1.3 2002/01/10 23:32:04 carstenklapp Exp $
+$Id: DB.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: DB.php,v 1.13 2002/07/02 15:19:49 cox Exp
+$Id: PEAR.php,v 1.1 2002/01/28 04:01:56 dairiki Exp $
+From Pear CVS: Id: PEAR.php,v 1.29 2001/12/15 15:01:35 mj Exp
+$Id: mysql.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: mysql.php,v 1.5 2002/06/19 00:41:06 cox Exp
+$Id: common.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: common.php,v 1.8 2002/06/12 15:03:16 fab Exp
+$Id: themeinfo.php,v 1.46 2002/03/08 20:31:14 carstenklapp Exp $
+$Id: Theme.php,v 1.58 2002/10/12 08:55:03 carstenklapp Exp $
+$Id: display.php,v 1.38 2002/09/15 20:17:58 rurban Exp $
+$Id: Template.php,v 1.46 2002/09/15 15:05:47 rurban Exp $
+$Id: WikiPlugin.php,v 1.27 2002/11/04 03:15:59 carstenklapp Exp $
+$Id: BlockParser.php,v 1.29 2002/11/25 22:25:49 dairiki Exp $
+$Id: InlineParser.php,v 1.19 2002/11/25 22:51:37 dairiki Exp $
+$Id: interwiki.php,v 1.23 2002/10/06 16:45:10 dairiki Exp $
+$Id: PageType.php,v 1.13 2002/09/04 20:39:47 dairiki Exp $
+-->
+</html>

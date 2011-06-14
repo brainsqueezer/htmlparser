@@ -1,0 +1,17 @@
+/AndFilter.java/1.6/Tue May 16 09:14:55 2006//
+/CssSelectorNodeFilter.java/1.6/Sun May 15 11:49:04 2005//
+/HasAttributeFilter.java/1.7/Sun May 15 11:49:04 2005//
+/HasChildFilter.java/1.5/Sun May 15 11:49:04 2005//
+/HasParentFilter.java/1.8/Sun May 15 11:49:04 2005//
+/HasSiblingFilter.java/1.3/Sun May 15 11:49:04 2005//
+/IsEqualFilter.java/1.2/Sun May 15 11:49:04 2005//
+/LinkRegexFilter.java/1.4/Sun Sep 18 23:40:44 2005//
+/LinkStringFilter.java/1.3/Sun May 15 11:49:04 2005//
+/NodeClassFilter.java/1.4/Sun May 15 11:49:04 2005//
+/NotFilter.java/1.5/Sun May 15 11:49:04 2005//
+/OrFilter.java/1.6/Tue May 16 09:14:55 2006//
+/RegexFilter.java/1.4/Sun May 15 11:49:04 2005//
+/StringFilter.java/1.6/Sun May 15 11:49:04 2005//
+/TagNameFilter.java/1.6/Sun May 15 11:49:04 2005//
+/XorFilter.java/1.1/Tue May 16 09:11:41 2006//
+/package.html/1.5/Sat Feb 28 15:52:43 2004//

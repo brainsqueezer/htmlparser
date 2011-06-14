@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>HTML Parser Frequently Asked Questions</title>
+    <meta name="author" content="
+    Derrick Oswald" />
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link REL ="stylesheet" TYPE="text/css" HREF="javadoc/stylesheet.css" TITLE="Style">
+  </head>
+  <body class="composite">
+
+    <div id="bodyColumn">
+      <div id="contentBox">
+        
+  
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></meta>
+    <meta name="KeyWords" content="faq,htmlparser,java"></meta>
+    <link rel="stylesheet" type="text/css" href="javadoc/stylesheet.css" title="Style"></link>
+  </head>
+  
+    <div class="section"><h2>Frequently Asked Questions</h2>
+      <ul>
+        <li><a href="#encodingchangeexception">Why am I getting an EncodingChangeException?</a></li>
+        <li><a href="#post">How can I use POST to fetch a page?</a></li>
+        <li><a href="#timeout">Is there a way to force a timeout for delinquent pages?</a></li>
+        <li><a href="#composite">Why aren't &lt;P&gt;, &lt;B&gt;, &lt;I&gt; etc. tags fully nested?</a></li>
+        <li><a href="#quiet">How can I block parser messages from appearing on stdout?</a></li>
+        <li><a href="#empty">How does the parser deal with tags like &lt;tag/&gt;?</a></li>
+        <li><a href="#jsp">How is JSP parsed using the parser?</a></li>
+        <li><a href="#byte">How do you find the byte offset from the beginning of a document for a tag?</a></li>
+      </ul>
+      
+      <a name="encodingchangeexception"></a>
+      <div class="section"><h3>Why am I getting an EncodingChangeException?</h3>
+        An EncodingChangeException is thrown to let you, the user, know that some nodes
+          already handed out by the parser are incorrect according to an encoding directive
+          in a &lt;META&gt; tag.
+        
+        <p>When a &lt;META&gt; tag with an encoding directive is encountered, the parser
+          rescans the input up to the current position using the new encoding.
+          If a different character results from interpreting the bytes with the
+          new encoding, the exception is thrown.
+        </p>
+        <p>
+          If you are supplying the parser with your own input, as from a file,
+          be sure to set the encoding if it is not the default (ISO-8859-1).
+          You can do this on the Page, Lexer, or Parser objects.
+        </p>
+        <p>
+          If the parser is fetching the data for you, the problem is with the
+          HTTP server, which should have sent the correct encoding as part of the
+          Content-Type header string.
+          Given that you have no control over the server, the only solution is
+          to reattempt the parse with the new encoding.
+        </p>
+        <p>After the exception is thrown, the parser has set it's encoding to the
+          new value, so you should be able to just reset and reparse, see for
+          example the handling in StringBean:
+<div class="source"><pre>
+try
+{
+    ... parser.parse (...) throws an EncodingChangeException...
+}
+catch (EncodingChangeException ece)
+{
+    ... do whatever necessary to reset your state here
+    try
+    {
+        // reset the parser
+        parser.reset ();
+        // try again with the encoding now in force
+        parser.parse (...);
+    }
+    catch (ParserException pe)
+    {
+    }
+
+}
+catch (ParserException pe)
+{
+}
+</pre></div>
+        </p>
+      </div>
+      <a name="post"></a>
+      <div class="section"><h3>How can I use POST to fetch a page?</h3>
+        <p>The standard HTTP request submitted by the parser is a GET.
+           The usual request submitted by a form is a POST.
+        </p>
+        <p>To illustrate how to use POST with the parser, we'll submit a form to the WHOIS
+          database of the American Registry for Internet Numbers (ARIN).<br></br>
+          <i>Note: there is an equivalent GET form at http://ws.arin.net/whois</i>.<br></br>
+          <i>See also:</i>.
+          <ul>
+          <li>RIPE http://www.ripe.net/perl/whois</li>
+          <li>APNIC http://www.apnic.net/apnic-bin/whois.pl</li>
+          <li>LACNIC http://lacnic.net/cgi-bin/lacnic/whois</li>
+          </ul>
+        
+        <p>On the ARIN web site, the page <a href="http://ws.arin.net/cgi-bin/whois.pl">http://ws.arin.net/cgi-bin/whois.pl</a>
+          has the following FORM that asks for an IP address and returns the registry details:
+        </p>
+<div class="source"><pre>
+&lt;form name=&quot;thisform&quot; method=&quot;POST&quot; action=&quot;/cgi-bin/whois.pl&quot;&gt;
+&lt;font face=&quot;arial,verdana,helvetica&quot; size=&quot;2&quot;&gt; Search for : &lt;/font&gt;
+&lt;input type=&quot;text&quot; Name=&quot;queryinput&quot; size=&quot;20&quot;&gt;
+&lt;input type=&quot;submit&quot;&gt;&lt;br&gt;
+&lt;/form&gt;
+</pre></div>
+        <p>From this we determine that the <tt>METHOD</tt> is <tt>POST</tt> and the form
+          should be submitted to <tt>/cgi-bin/whois.pl</tt>. This absolute URL is relative to the
+          page it is found on, so the form should be submitted to <tt>http://ws.arin.net/cgi-bin/whois.pl</tt>
+          when the <tt>Submit</tt> input is clicked. The only <tt>INPUT</tt> element other than the
+          <tt>Submit</tt> is a single <tt>text</tt> field named <tt>queryinput</tt> that takes 20 or fewer characters.
+          Other types of input element are described in <a href="http://www.w3.org/TR/html4/interact/forms.html">http://www.w3.org/TR/html4/interact/forms.html</a>.
+        </p>
+        <p>The basic operation is to pass a fully prepared <tt>HttpURLConnection</tt> connected
+          to the <tt>POST</tt> target URL into the <tt>Parser</tt>, either in the constructor or
+          via the <tt>setConnection()</tt> method. To condition the connection, use the
+          <tt>setRequestMethod()</tt> method to set the <tt>POST</tt> operation, and the
+          <tt>setRequestProperty()</tt> and other explicit method calls.
+          Then write the input field(s) as an ampersand concatenation
+          (<tt>&quot;input1=value1&amp;input2=value2&amp;...&quot;</tt>) into the <tt>PrintWriter</tt>
+          obtained by a call to <tt>getOutputStream()</tt>.
+        </p>
+        <p>The following sample program illustrates the principles using a <tt>StringBean</tt>,
+          but the same code could be used with a <tt>Parser</tt> by replacing the last three lines
+          in the <tt>try</tt> block with:
+        </p>
+<div class="source"><pre>
+parser = new Parser ();
+parser.setConnection (connection);
+// ... do parser operations
+</pre></div>
+        <p></p>
+<div class="source"><pre>
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+import org.htmlparser.beans.StringBean;
+
+/**
+ * WhoIs.java
+ * Use POST to get information about an IP address from ws.arin.net.
+ * Created on April 29, 2006, 11:06 PM
+ */
+public class WhoIs
+{
+    String mText; // text extracted from the response to the POST request
+
+    /**
+     * Creates a new instance of WhoIs.
+     */
+    public WhoIs (String ipaddress)
+    {
+        URL url;
+        HttpURLConnection connection;
+        StringBuffer buffer;
+        PrintWriter out;
+        StringBean bean;
+
+        try
+        {
+            // from the 'action' (relative to the refering page)
+            url = new URL (&quot;http://ws.arin.net/cgi-bin/whois.pl&quot;);
+            connection = (HttpURLConnection)url.openConnection ();
+            connection.setRequestMethod (&quot;POST&quot;);
+
+            connection.setDoOutput (true);
+            connection.setDoInput (true);
+            connection.setUseCaches (false);
+
+            // more or less of these may be required
+            // see Request Header Definitions: http://www.ietf.org/rfc/rfc2616.txt
+            connection.setRequestProperty (&quot;Accept-Charset&quot;, &quot;*&quot;);
+            connection.setRequestProperty (&quot;Referer&quot;, &quot;http://ws.arin.net/cgi-bin/whois.pl&quot;);
+            connection.setRequestProperty (&quot;User-Agent&quot;, &quot;WhoIs.java/1.0&quot;);
+
+            buffer = new StringBuffer (1024);
+            // 'input' fields separated by ampersands (&amp;)
+            buffer.append (&quot;queryinput=&quot;);
+            buffer.append (ipaddress);
+            // etc.
+
+            out = new PrintWriter (connection.getOutputStream ());
+            out.print (buffer);
+            out.close ();
+
+            bean = new StringBean ();
+            bean.setConnection (connection);
+            mText = bean.getStrings ();
+        }
+        catch (Exception e)
+        {
+            mText = e.getMessage ();
+        }
+
+    }
+
+    public String getText ()
+    {
+        return (mText);
+    }
+
+    /**
+     * Program mainline.
+     * @param args The ip address (dot notation) to look up.
+     */
+    public static void main (String[] args)
+    {
+        if (0 &gt;= args.length)
+            System.out.println (&quot;Usage:  java WhoIs &lt;ipaddress&gt;&quot;);
+        else
+            System.out.println (new WhoIs (args[0]).getText ());
+    }
+}
+</pre></div>
+      </div>
+      
+      <a name="timeout"></a>
+      <div class="section"><h3>Is there a way to force a timeout for delinquent pages?</h3>
+        <p>If you are using the Sun jvm, try using:
+<div class="source"><pre>
+System.setProperty (&quot;sun.net.client.defaultReadTimeout&quot;, &quot;7000&quot;);
+System.setProperty (&quot;sun.net.client.defaultConnectTimeout&quot;, &quot;7000&quot;);
+</pre></div>
+          in the mainline before starting your main application processing.
+        </p>
+        <p>This sets the socket timeouts to 7 seconds, but you will need 
+           to catch the I/O exceptions.
+        </p>
+      </div>
+      
+      <a name="composite"></a>
+      <div class="section"><h3>Why aren't &lt;P&gt;, &lt;B&gt;, &lt;I&gt; etc. tags fully nested?</h3>
+        <p>Authors are sometimes lazy and often fail to close some tags as
+          required by the HTML standard. This causes some problems for the parser.
+        </p>
+        <p>For this heuristic reason, not all possible tags are registered as composite tags,
+          which is what generates the 'parent/child' nesting relationship.
+          It is considered better to have a valid, less nested parse than a possibly invalid parse.
+        </p>
+        <p>You are free to add whatever nodes you like as composite nodes using the
+          prototypical node factory paradigm. First create your class that derives from
+          <tt>CompositeTagNode</tt> (copy and modify one of the existing tags that is most
+          like your desired tag):
+        </p>
+<div class="source"><pre>
+public class BoldTag extends CompositeTag
+{
+    private static final String[] mIds = new String[] {&quot;B&quot;};
+    public BoldTag ()
+    {
+    }
+    public String[] getIds ()
+    {
+        return (mIds);
+    }
+    public String[] getEnders ()
+    {
+        return (mIds);
+    }
+    public String[] getEndTagEnders ()
+    {
+        return (new String[0]);
+    }
+}
+</pre></div>
+        <p>Then, register an instance of your node with a PrototypicalNodeFactory:
+        </p>
+<div class="source"><pre>
+PrototypicalNodeFactory factory = new PrototypicalNodeFactory ();
+factory.registerTag (new BoldTag ());
+parser.setNodeFactory (factory);
+</pre></div>
+        <p>The problem becomes detecting when the tag doesn't have a &lt;/B&gt; like 
+          it should, so getEnders() and getEndTagEnders() should probably have a
+          longer list of tag names. Enders are the tag names that force an end
+          tag to be generated, while EndTagEnders are the end tags (&lt;/xxx&gt;) that force an end
+          tag to be generated.
+        </p>
+      </div>
+      
+      <a name="quiet"></a>
+      <div class="section"><h3>How can I block parser messages from appearing on stdout?</h3>
+        <p>The parser sends warning and error messages to standard output by default.
+          You might want to block these messages. To achieve this, use a different feedback object:
+        </p>
+<div class="source"><pre>
+Parser parser = new Parser (&quot;http://...&quot;, new DefaultParserFeedback (DefaultParserFeedback.QUIET));
+</pre></div>
+        <p>The <tt>Parser</tt> class has a static member with just such a construction:
+        </p>
+<div class="source"><pre>
+Parser parser = new Parser (&quot;http://...&quot;, Parser.DEVNULL);
+</pre></div>
+        <p>You can also switch the feedback to DEBUG mode, to get extra details.
+        </p>
+<div class="source"><pre>
+Parser parser = new Parser (&quot;http://...&quot;, new DefaultParserFeedback (DefaultParserFeedback.DEBUG));
+</pre></div>
+        <p>
+          To handle the feedback yourself, implement the <tt>ParserFeedback</tt>,
+          interface by implementing <tt>info()</tt>, <tt>warning()</tt> and <tt>error()</tt>.
+        </p>
+      </div>
+      
+      <a name="empty"></a>
+      <div class="section"><h3>How does the parser deal with tags like &lt;tag/&gt;?</h3>
+        <p>
+          The parser handles tags ending with a slash as a normal <tt>Tag</tt> object.
+          The <tt>Tag</tt> interface has a method - <tt>isEmptyXmlTag()</tt> which
+          returns <tt>true</tt> if is this such an empty xml tag (has no end tag).
+        </p>
+      </div>
+      
+      <a name="jsp"></a>
+      <div class="section"><h3>How is JSP parsed using the parser?</h3>
+        <p>There is a <tt>JspTag</tt> class that handles &quot;%&quot;, &quot;%=&quot; and &quot;%@&quot; tags,
+          <em>but not within tags or remarks</em>.
+          So, the Jsp tag within the tag <tt>&lt;input type='&lt;%= MyType %&gt;'&gt;</tt> would
+          not be returned as a tag, but would instead be part of the text of the 'type' attribute,
+          but the same tag within the text of the page would be returned as a <tt>JspTag</tt> tag.
+        </p>
+      </div>
+      
+      <a name="byte"></a>
+      <div class="section"><h3>How do you find the byte offset from the beginning of a document for a tag?</h3>
+        <p>Character positions are much easier to obtain than byte positions.
+          Each tag returned by the parser or lexer has methods <tt>getStartPosition()</tt> and 
+          <tt>getEndPosition()</tt> which return the starting and ending character positions.
+        </p>
+        <p>These can be converted to line and column numbers in a hypothetical text file using 
+          <tt>row()</tt> and <tt>column()</tt> methods on the <tt>Page</tt> object:
+        </p>
+<div class="source"><pre>
+Page page = parser.getLexer ().getPage ();
+int row = page.row (tag.getStartPosition ()); // note: zero based
+int column = page.column (tag.getStartPosition ());
+</pre></div>
+        <p>Converting a character position into a byte position is dependant on the character
+          encoding used. For the ISO-8859-1 encoding, the correspondence is one byte per character,
+          but for other encodings, often more than one byte is used per character. Perhaps the
+          only safe way is to write all the characters, up to the character position of interest,
+          to a suitably encoded writer on a stream, flush the writer and then examine the
+          byte position of the underlying stream.
+        </p>
+      </div>
+    </div>
+  
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2001-2006
+    
+      </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

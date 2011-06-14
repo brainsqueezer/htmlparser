@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE>How to Build the HTML Parser Libraries</TITLE>
+    <link REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+  </HEAD>
+  <BODY bgcolor="white">
+  <H1>How to Build the HTML Parser libraries</H1>
+  <H2>JDK</H2>
+  Set up java. I won't include instructions here, just a link to the
+  <a href="http://java.sun.com/j2se">Sun j2se site</a>. I use version 1.5, and you
+  need a JDK (java development kit), not a JRE (java runtime environment).<p>
+  Test your installation by typing command:<p>
+  <code>javac</code><p>
+  This should display help on the java compiler options.
+  <H2>Ant</H2>
+  Set up ant, the Java-based build tool from the 
+  <a href="http://jakarta.apache.org/ant/index.html">Apache Jakarta project</a>.
+  It is kind of like Make, but without Make's wrinkles. The build.xml file the
+  HTML Parser uses relies on command tags available in
+  Ant version 1.4.1 or higher. The version currently used on the build machine
+  is 1.6.2. The current version of Ant is available 
+  <a href="http://archive.apache.org/dist/ant/ant-current-bin.zip">here</a>.<p>
+  Basically you unzip the file into a directory and add an ANT_HOME environment
+  variable that points at it. Test your installation by typing the command:<p>
+  <code>ant -help</code><p>
+  This should display help on ant options.
+  <H2>Third Party Libraries</H2>
+  Any needed third-party libraries are included in the lib directory.<p>
+  The unit test code relies on lib/junit.jar from the <a href="http://sourceforge.net/projects/junit">JUnit project</a>.
+  The version used on the build machine is 3.8.1 which you can get 
+  <a href="http://prdownloads.sourceforge.net/junit/junit3.8.1.zip?download">here</a>.
+  <H2>Sources</H2>
+  The distribution zip file contains a src.jar file. If you've unpacked the
+  distribution this file should be in the top level directory you chose.<p>
+  Unjar this file with the command:<p>
+  <code>jar -xf src.jar</code><p>
+  There should now be a build.xml in the top level directory.
+  <H2>Building</H2>
+  The default ant target 'htmlparser' builds everything:<p>
+  <code>ant</code><p>
+  If you just want to build some of the parts see the help list:<p>
+  <pre><code>ant -projecthelp
+ Package        glom the release and source files into the distribution zip file
+ Release        prepare the release files
+ changelog      create the change log from CVS logs
+ checkstyle     check source code adheres to coding standards
+ clean          cleanup
+ compile        compile all java files
+ compilelexer   compile lexer java files
+ compileparser  compile parser java files
+ htmlparser     same as Package plus cleanup
+ init           initialize version properties
+ jar            create htmlparser.jar and htmllexer.jar
+ jarlexer       create htmllexer.jar
+ jarparser      create htmlparser.jar
+ javadoc        create JavaDoc (API) documentation
+ sources        create the source zip
+ test           run the JUnit tests
+ thumbelina     create thumbelina.jar
+ versionSource  update the version in all java files
+  </code></pre><p>
+  <H2>Developing</H2>
+  For development purposes you might want to get an Integrated Development
+  Environment (IDE) such as <a href="http://www.netbeans.org/">NetBeans</a> or <a
+  href="http://eclipse.org/">Eclipse</a>.
+  Mount the org directory where the HTML Parser was installed along with the
+  <code>junit.jar</code> file from the <code>lib</code> directory, and the
+  <code>tools.jar</code> file from the java JDK lib directory
+  <code>[where java is installed]/lib/tools.jar<code>. "Build All" should work.
+  <H2>CVS</H2>
+  The most recent files are only available via CVS:
+  <pre>
+  server: cvs.htmlparser.sourceforge.net
+  repository: /cvsroot/htmlparser
+  </pre>
+  For read-only access use 'pserver' and anonymous access with no password.
+  For commit access you'll need to set up ssh (see 
+<a href="http://sourceforge.net/docman/display_doc.php?docid=6841&group_id=1">an
+introduction to SSH on sourceforge</a> and 
+<a href="http://sourceforge.net/docman/display_doc.php?docid=761&group_id=1">a
+guide on setting up ssh keys</a>).
+<p>Short instructions from Karle Kaila:<p>
+<pre>
+I have installed SSH software from <a
+href="http://www.f-secure.com">www.f-secure.com</a>
+
+I think it was something like F-Secure SSH 5.2 for Win95/98/ME/NT4.0/2000/XP Client
+
+It is a nice grapfical SSH client both for terminal use and filetransfer
+and it also contains commandline ssh2 software that CVS needs.
+
+To access CVS I first set it up with these commands
+
+set CVS_RSH=ssh2
+set CVSROOT=username@cvs.htmlparser.sourceforge.net:/cvsroot/htmlparser
+
+username = your sourceforge username
+
+In an empty directory I then can give CVS commands such as
+
+cvs chekcout htmlparser
+
+It asks for your password to sourceforge
+
+This retrieves the latest  fileversions.
+Check the CVS commands in some handbook you can find on the internet.
+The manual I found is called Version Management with CVS by Per Cederqvist et al.
+perhaps from http://www.cvshome.org
+
+Derrick says:
+I need
+CVSROOT=:ext:username@cvs.htmlparser.sourceforge.net:/cvsroot/htmlparser
+CVS_RSH=ssh
+</pre>
+  <H2>Other</H2>
+  Some of the build.xml targets (like changelog) rely on Perl to execute, and
+  need a sourceforge login via ssh (secure shell). This is unlikely to be needed
+  by the casual user.
+  </BODY>
+</HTML>

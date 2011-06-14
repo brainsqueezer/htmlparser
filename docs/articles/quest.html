@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>The Quest for HTMLParser</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link REL ="stylesheet" TYPE="text/css" HREF="../javadoc/stylesheet.css" TITLE="Style">
+</head>
+<body>
+<h2><strong>The Quest for HTMLParser</strong></h2>
+<p>by <a href="../contributors.html#dhaval">Dhaval Udani</a><br>
+</p>
+<table width="75%" border="0">
+  <tr>
+    <td><p>In 1984, Citicorp Overseas Software Limited(COSL) was created by Citibank 
+        to produce low cost software for its various banking operations. Citicorp 
+        Information Technologies India Ltd.(CITIL), now know ans i-Flex, was formed 
+        out of this company around 10 years back to service non-Citi clients. 
+        In 2001, COSL was merged with another arm of Citibank, India known as 
+        Global Support Unit(GSU) to form OrbiTech Solutions Ltd which in turn 
+        merged with Polaris Software Labs in 2002. With its expertise in the banking 
+        domain, OrbiTech undertook to develop a suite of banking products. However 
+        with several players in the market, it needed something innovative and 
+        fast. With an aim of increasing productivity, an initiative was started 
+        to develop tools, code generators and reusable components to be used within 
+        the organization. It is in this aspect that I got involved with HTMLParser.</p>
+      <p>We were developing an MVC-based framework for performing static maintenance 
+        of information like bank accounts, customer records etc. To simplify development 
+        for users, we were asking our users to develop simple static HTML pages 
+        which we would convert to JSP pages capable of showing dynamic data. It 
+        is towards this goal that I required a tool which could parse HTML tags 
+        and allow me to play with them. I searched high and low for various options. 
+        One of them was the HTML DOM standard and APIs of W3C. However their inability 
+        to process JSP tags and inability to change the tags and reproduce them 
+        meant I had to discard it. Another implementation of the DOM standard 
+        was provided by NekoHTML. </p>
+      <p>However it had similar problems and was too complex. These factors drew 
+        me to HTMLParser. Initially it was difficlt to understand but once I had 
+        written my first parsing routine, it was too easy. I especially love the 
+        easy manner in which scanners are registered and removed so that scanning 
+        is enabled or disabled for particular tags. This feature is absolutely 
+        fantastic. Having to search for tags which were not written in the original 
+        HTMLParser caused a slight flutter in my heart. However Somik encouraged 
+        me not to give up and write my own tag-scanner pairs.<br>
+        <br>
+        This was the toughest activity because it meant not only delving deep 
+        in the code but also the psyche behind the design. Somehow I got through 
+        the first one and then it just flowed. I have now written 5 tag-scanner 
+        pairs. Its just too simple once you get the hang of it. The constant ongoing 
+        development and effort at bug-fixing also meant that any bugs reported 
+        by me would be fixed and a release would be available soon.<br>
+        <br>
+        <a href="../contributors.html#dhaval"><em>Dhaval Udani</em></a><em> 
+        is a Senior Analyst at Orbitech Solutions Ltd. and a developer on the 
+        HTMLParser project. </em></p></td>
+  </tr>
+</table>
+</body>
+</html>

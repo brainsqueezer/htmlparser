@@ -1,0 +1,19 @@
+/AllTests.java/1.62/Sun Jun  4 19:17:20 2006//
+/AssertXmlEqualsTest.java/1.18/Fri Jan  2 16:24:55 2004//
+/BadTagIdentifier.java/1.17/Fri Jan  2 16:24:55 2004//
+/FunctionalTests.java/1.57/Sat May 27 14:02:28 2006//
+/LineNumberAssignedByNodeReaderTest.java/1.31/Fri Jan  2 16:24:55 2004//
+/ParserTest.java/1.67/Sun Jun  4 19:17:20 2006//
+/ParserTestCase.java/1.53/Mon Apr 17 23:45:11 2006//
+/SAXTest.java/1.1/Wed Jul 14 01:58:03 2004//
+D/codeMetrics////
+D/filterTests////
+D/lexerTests////
+D/nodeDecoratorTests////
+/package.html/1.19/Fri Jan  2 16:24:55 2004//
+D/parserHelperTests////
+D/scannersTests////
+D/tagTests////
+D/temporaryFailures////
+D/utilTests////
+D/visitorsTests////

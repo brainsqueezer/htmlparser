@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Sample Programs</title>
+    <link REL ="stylesheet" TYPE="text/css" HREF="javadoc/stylesheet.css" TITLE="Style">
+</head>
+
+<body>
+  <h2>Sample Programs</h2>
+  <p>The example programs included with the HTML Parser distribution are listed
+    below, with some details.</p>
+  <p><strong>Note:</strong> On unix systems if you used the Java jar command or
+    some older unzip utility to extract the distribution zip file, the
+    executable flag will not have been preserved on the files in the bin
+    directory. You can fix this by issuing the following command:
+    <pre>
+    <code>chmod u+x bin/*</code>
+    </pre>
+<p>
+<table width="94%" border="0">
+  <tr> 
+    <td valign="top">
+    <strong>Parser</strong><br>
+    </td>
+    <td>
+    <i>Parse a web page and print the tags in a simple loop.</i><br>
+    <a href="javadoc/org/htmlparser/Parser.html#main(java.lang.String[])" target="_parent">org.htmlparser.Parser.main(String[] args)</a>
+    <pre>
+    <code>bin/parser http://website_url [tag_name]</code>
+    where tag_name is an optional tag name to be used as a filter, i.e.
+        A - Show only the link tags extracted from the document
+        IMG - Show only the image tags extracted from the document
+        TITLE - Extract the title from the document
+    NOTE: this is also the default program for the htmlparser.jar, so the above could be:
+    <code>java -jar lib/htmlparser.jar http://website_url [tag_name]</code>
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Lexer</strong><br>
+    </td>
+    <td>
+    <i>Print the low level nodes of a web page.</i><br>
+    <a href="javadoc/org/htmlparser/lexer/Lexer.html" target="_parent">org.htmlparser.lexer.Lexer</a>
+    <pre>
+    <code>bin/lexer http://website_url</code>
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Filter Builder</strong><br>
+    </td>
+    <td>
+    <i>Interactively generate source code to extract web site contents.</i><br>
+    <a href="javadoc/org/htmlparser/parserapplications/filterbuilder/FilterBuilder.html" target="_parent">org.htmlparser.parserapplications.filterbuilder.FilterBuilder</a>
+    <pre>
+    <code>bin/filterbuilder</code>
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Link Extractor</strong><br>
+    </td>
+    <td>
+    <i>Extract links/mail addresses from a web page.</i><br>
+    <a href="javadoc/org/htmlparser/parserapplications/LinkExtractor.html" target="_parent">org.htmlparser.parserapplications.LinkExtractor</a>
+    <pre>
+    <code>bin/linkextractor http://website_url [-maillinks]</code>
+    the optional -maillinks argument causes mailto: links to be printed
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>String Extractor</strong><br>
+    </td>
+    <td>
+    <i>Extract text from a web page.</i><br>
+    <a href="javadoc/org/htmlparser/parserapplications/StringExtractor.html" target="_parent">org.htmlparser.parserapplications.StringExtractor</a>
+    <pre>
+    <code>bin/stringextractor http://website_url [-links]</code>
+    the optional -links argument causes hyperlinks to be shown within the text
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Site Capturer</strong><br>
+    </td>
+    <td>
+    <i>Save a web site locally.</i><br>
+    <a href="javadoc/org/htmlparser/parserapplications/SiteCapturer.html" target="_parent">org.htmlparser.parserapplications.SiteCapturer</a>
+    <pre>
+    <code>bin/sitecapturer http://source_website /target_directory/ [true|false]</code>
+    the optional boolean argument determines whether resources such as images,
+    audio and video are to be captured
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Thumbelina</strong><br>
+    </td>
+    <td>
+    <i>View images behind thumbnails.</i><br>
+    <a href="javadoc/org/htmlparser/lexerapplications/thumbelina/package-summary.html" target="_parent">org.htmlparser.lexerapplications.thumbelina.Thumbelina</a>
+    <pre>
+    <code>bin/thumbelina [http://starting_website]</code>
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>BeanyBaby</strong><br>
+    </td>
+    <td>
+    <i>Parser Java Bean demo.</i><br>
+    <a href="javadoc/org/htmlparser/beans/BeanyBaby.html" target="_parent">org.htmlparser.beans.BeanyBaby</a>
+    <pre>
+    <code>bin/beanybaby [http://starting_website]</code>
+    </pre>
+    </td>
+  </tr>
+  <tr> 
+    <td valign="top">
+    <strong>Translate</strong><br>
+    </td>
+    <td>
+    <i>Numeric character reference and character entity reference to unicode codec.</i><br>
+    <a href="javadoc/org/htmlparser/util/Translate.html" target="_parent">org.htmlparser.util.Translate</a>
+    <pre>
+    <code>bin/translate [-encode] &lt;input_file &gt;output_file</code>
+    </pre>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

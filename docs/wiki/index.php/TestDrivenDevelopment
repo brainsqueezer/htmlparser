@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- $Id: head.tmpl,v 1.5 2002/12/15 01:30:47 carstenklapp Exp $ -->
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<meta name="keywords" content="Test Driven Development, PhpWiki" />
+<meta name="description" content="Test-Driven development is a rewarding practice, that stands out in eXtreme Programming. All the other practices of XP can usually be compromised when dealing with distributed teams, but the one practice that can and must be followed always - is test-driven development (TDD)." />
+<meta name="language" content="" />
+<meta name="document-type" content="Public" />
+<meta name="document-rating" content="General" />
+<meta name="generator" content="phpWiki" />
+<meta name="PHPWIKI_VERSION" content="1.3.4" />
+
+<link rel="shortcut icon" href="/wiki/themes/default/images/favicon.ico" />
+<link rel="home" title="HomePage" href="HomePage" />
+<link rel="help" title="HowToUseWiki" href="HowToUseWiki" />
+<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />
+<link rel="author" title="The PhpWiki Programming Team" href="http://phpwiki.sourceforge.net/phpwiki/ThePhpWikiProgrammingTeam" />
+<link rel="search" title="FindPage" href="FindPage" />
+<link rel="alternate" title="View Source: TestDrivenDevelopment" href="TestDrivenDevelopment?action=viewsource&amp;version=6" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="RecentChanges?format=rss" />
+
+<link rel="bookmark" title="SandBox" href="SandBox" />
+<link rel="bookmark" title="WikiWikiWeb" href="WikiWikiWeb" />
+
+
+
+<link rel="stylesheet" title="MacOSX" type="text/css" charset="iso-8859-1" href="/wiki/themes/MacOSX/MacOSX.css" /><link rel="alternate stylesheet" title="Printer" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-printer.css" media="print, screen" /><link rel="alternate stylesheet" title="Modern" type="text/css" charset="iso-8859-1" href="/wiki/themes/default/phpwiki-modern.css" /><style type="text/css">
+<!--
+body {background-image: url(/wiki/themes/MacOSX/images/bgpaper8.png);}
+-->
+</style>
+<title>PhpWiki - Test Driven Development</title>
+</head>
+<!-- End head -->
+<!-- Begin body -->
+<!-- $Id: body.tmpl,v 1.30 2002/09/02 14:36:58 rurban Exp $ -->
+<body>
+<!-- Begin top -->
+<!-- $Id: top.tmpl,v 1.20 2002/12/15 01:30:47 carstenklapp Exp $ -->
+
+<!-- End top -->
+<!-- Begin browse -->
+<!-- $Id: browse.tmpl,v 1.22 2002/02/19 23:00:26 carstenklapp Exp $ -->
+
+
+<div class="wikitext"><p><big><b>Test Driven Development</b></big></p>
+<p>Test-Driven development is a rewarding practice, that stands out in eXtreme Programming. All the other practices of XP can usually be compromised when dealing with distributed teams, but the one practice that can and must be followed always - is test-driven development (TDD).</p>
+<p><b>What is Test-Driven Development ?</b></p>
+<p>Test Coverage is a philosophy - that for every bit of logic in the system, there is a test validating that the logic is correctly implemented (Unit Tests), or that the logic is correct at all from an external system perspective (Functional Tests). The HTMLParser project also follows quick releases - and in order to ensure that a new release does not add more bugs, we ensure that -</p>
+<blockquote>
+<p>1. No existing tests break</p>
+<p>2. The new code has test-coverage</p>
+</blockquote>
+<p>However, Test-Driven Development (TDD) is not about writing tests for your code - it is writing tests before your code.
+The reason we do this - is to keep the system as simple as possible, and just write enough code to make the tests pass. After all the architecture and patterns we study, it is dangerous if we cannot control our knowledge and use it indiscriminately. TDD allows tests to drive the coding process, thus helping us produce a really simple system. It is possibly a paradigm shift for many programmers who write tests after the code, or don't write tests at all. But you cannot produce maintainable systems of high quality without discipline. Hence, we really like to enforce discipline on contributions to this project.</p>
+<p><b>I am sold on tests - now what ?</b></p>
+<p>Its time to take a look at the test-framework in place that enables quick and easy testing - as we believe that testing should be painless. If it is too hard, we wouldnt do it. To begin with, as is the case with most Java XP projects of the day, we use JUnit. JUnit allows us to create suites of tests and run them automatically. In case you are new to unit testing, please make sure that you have read and tried out the examples from Test Infected - Programmers Love Writing Tests.</p>
+<p>Once you are comfortable with JUnit, you are ready to start writing tests for the parser.
+We provide you with a utility class - <span class="wikiunknown"><u>ParserTestCase</u><a href="ParserTestCase?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span> - with which you can rig up a complex test pretty easily. This class is in the org.htmlparser.tests package in the src.zip.</p>
+<p><b>Writing a testcase with <span class="wikiunknown"><u>ParserTestCase</u><a href="ParserTestCase?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span></b></p>
+<p><span class="wikiunknown"><u>ParserTestCase</u><a href="ParserTestCase?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span> provides you with utility methods to create parser objects quickly and easily for sample html that is being tested. Once you have the parser objects, you have another utility method to parse it and put all the parsed objects into an array of nodes - which is then available to you for assertions.</p>
+<p>Lets try writing a simple test - we have a bug report - that the parser throws exception when tags of the type &lt;base ...&gt; are encountered without an href attribute. Base tags can also have target attributes like &lt;base target="_top"&gt;, but for some reason, the parser doesen't accept this and throws an exception. Before we start to fix the bug, we write a test case to prove that the bug exists.</p>
+<p>Since there already exists a testcase called <span class="wikiunknown"><u>BaseHrefTagTest</u><a href="BaseHrefTagTest?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span>, we shall add our test to this class.</p>
+<pre>
+   public class BaseHrefTagTest extends ParserTestCase {
+     ...
+   }</pre>
+<p><b>Note</b> that all testcases for the parser extend from <span class="wikiunknown"><u>ParserTestCase</u><a href="ParserTestCase?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span>.</p>
+<p>We shall call our method - testNotHrefBaseTag() - for it describes the case when the base tag is not a base href, but something else. It is <b>very important</b> to write <b>intention-revealing code</b>. This is the reason we can spend <b>less time on documentation</b> and <b>more time on coding</b>.</p>
+<p>Below, we present the code for the method <i>testNotHrefBaseTag()</i>:</p>
+<pre>
+  public void testNotHrefBaseTag() throws ParserException {
+    createParser("&lt;base target=\"_top\"&gt;");
+    parseAndAssertNodeCount(1);
+    assertTrue("Should be a base tag but was "+node[0].getClass().getName(),node[0] instanceof HTMLBaseHREFTag);
+    BaseHrefTag baseTag = (BaseHrefTag)node[0];
+    assertEquals("Base Tag HTML","&lt;base target=\"_top\"&gt;",baseTag.toHTML());
+  }</pre>
+<p>In Line 2, we make a call to <i>createParser()</i> - this creates a parser object internally for us, that operates on the data provided in the parameter - the test data. This simulates the situation that the parser encounters a line containing the given test data, that should result in the parser throwing an exception upon parsing - if it is buggy.</p>
+<p>In Line 3, we would like to register all the scanners available - with a call to <i>parser.registerScanners()</i>. When writing tests, it is usually a good idea to do this so as to verify that in a practical situation, when all scanners are registered, there are no undesirable side-effects - i.e. even if your scanner works fine individually, it might not when it is in a system of several other scanners.</p>
+<p>In Line 4, we ask the parser to pass through this data and collect all the html nodes into an array, and also verify that the number of nodes found were what we expected. This is done with a call to parseAndAssertNodeCount().</p>
+<p>After a call to this method - we have with us an array called "node" - which contains all the parsed objects. We can now take control and do our assertions to see what it contains. Line 5 has an asertTrue(), that verifies that the first node object is indeed a base tag, and if not, it provides the info about the object that was found instead.</p>
+<p>Once control passes to line 6, we are sure that what we have is a base href tag - and we can proceed to downcast it to <i><span class="wikiunknown"><u>BaseHrefTag</u><a href="BaseHrefTag?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span></i>. Once we have our base tag - we can easily test its contents in Line 7.</p>
+<p>An important detail to note here is that - your test method must have a throws clause - declaring that it throws an <i><span class="wikiunknown"><u>ParserException</u><a href="ParserException?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span></i>. Do not surround your code with a try-catch, unless you are testing that exceptions should be thrown (there are better ways of doing that as well). This is because, JUnit automatically catches any exception thrown and shows the error in the test runner.</p>
+<p>The above example is from an actual bug-reproduction and fixing session. After the test failed - the bar went red - we had the proof that the bug existed. This was then fixed, and when the bar showed green, it meant that the bug had been eliminated, destryoed, annhilated, whatever.. Death to the bugs!</p>
+<p><i><span class="wikiunknown"><u>ParserTestCase</u><a href="ParserTestCase?action=edit"><img src="../themes/MacOSX/buttons/uww.png" alt="?" class="wiki-button" border="0" /></a></span></i> also offers an <i>assertStringEquals()</i> method, that does a character-by-character check of two strings and displays valuable mismatch information that is usually not available when you use assertEquals().</p>
+<p><b>Communicate with testcases</b></p>
+<p>Open-source projects provide a good way of having an expanded testing base. This has proved to be very true in case of the htmlparser project. It is therefore important for us to look at patterns of reporting bugs which enable us to maximize the communication bandwidth, and minmize the involvement time of developers.</p>
+<p>As human beings - language often fails us when we need it most. We do get bug reports like, "The parser barfs at the url .... with this exception ...". Such a report assumes that someone has the time to try out the url, find the exception, write a test to reproduce the situation, and then fix it. Time is a precious commodity on open-source projects, and bug reports that are not informative enough are often a strain on the developers supporting the project.</p>
+<p>We can remedy this with a high-class bug report of the form - "The parser barfs at the url ... with the exception ... It is a problem with the <strong></strong>_ tag , and I wrote a testcase to reproduce this bug. Here is the testcase".</p>
+<p>Such bug reports make it a pleasure for any developer to simply take the testcase, run it, find the bug, and fix it. We've often had issues when people reported bugs which we didn't think existed. So we wrote testcases and proved that the code was indeed bug-free (or not).</p>
+<p>We encourage users of the parser to get familiar with writing tests for the parser and submit testcases in their bug reports.</p>
+<p>--<a href="../index.php/SomikRaha" class="wiki">SomikRaha</a>, February 16, 2003 11:55:42 am</p>
+</div>
+
+
+<!-- End browse -->
+<!-- Begin bottom -->
+<!-- $Id: bottom.tmpl,v 1.3 2002/09/15 20:21:16 rurban Exp $ -->
+<!-- Add your Disclaimer here -->
+<!-- Begin debug -->
+<!-- $Id: debug.tmpl,v 1.9 2002/09/17 02:10:33 dairiki Exp $ -->
+<table width="%100" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+
+</td><td>
+<span class="debug">Page Execution took 0.37 seconds</span>
+</td></tr></table>
+<!-- This keeps the valid XHTML! icons from "hanging off the bottom of the scree" -->
+<br style="clear: both;" />
+<!-- End debug -->
+<!-- End bottom -->
+</body>
+<!-- End body -->
+<!-- phpwiki source:
+$Id: prepend.php,v 1.13 2002/09/18 19:23:25 dairiki Exp $
+$Id: ErrorManager.php,v 1.16 2002/09/14 22:23:36 dairiki Exp $
+$Id: HtmlElement.php,v 1.27 2002/10/31 03:28:30 carstenklapp Exp $
+$Id: XmlElement.php,v 1.17 2002/08/17 15:52:51 rurban Exp $
+$Id: WikiCallback.php,v 1.2 2001/11/21 20:01:52 dairiki Exp $
+$Id: index.php,v 1.99 2002/12/31 01:13:14 wainstead Exp $
+$Id: main.php,v 1.90 2002/11/19 07:07:37 carstenklapp Exp $
+$Id: config.php,v 1.68 2002/11/14 22:28:03 carstenklapp Exp $
+$Id: FileFinder.php,v 1.11 2002/09/18 18:34:13 dairiki Exp $
+$Id: Request.php,v 1.24 2002/12/14 16:21:46 dairiki Exp $
+$Id: WikiUser.php,v 1.29 2002/11/19 07:07:38 carstenklapp Exp $
+$Id: WikiDB.php,v 1.17 2002/09/15 03:56:22 dairiki Exp $
+$Id: SQL.php,v 1.2 2001/09/19 03:24:36 wainstead Exp $
+$Id: mysql.php,v 1.3 2001/12/08 16:02:35 dairiki Exp $
+$Id: PearDB.php,v 1.28 2002/09/12 11:45:33 rurban Exp $
+$Id: backend.php,v 1.3 2002/01/10 23:32:04 carstenklapp Exp $
+$Id: DB.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: DB.php,v 1.13 2002/07/02 15:19:49 cox Exp
+$Id: PEAR.php,v 1.1 2002/01/28 04:01:56 dairiki Exp $
+From Pear CVS: Id: PEAR.php,v 1.29 2001/12/15 15:01:35 mj Exp
+$Id: mysql.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: mysql.php,v 1.5 2002/06/19 00:41:06 cox Exp
+$Id: common.php,v 1.2 2002/09/12 11:45:33 rurban Exp $
+From Pear CVS: Id: common.php,v 1.8 2002/06/12 15:03:16 fab Exp
+$Id: themeinfo.php,v 1.46 2002/03/08 20:31:14 carstenklapp Exp $
+$Id: Theme.php,v 1.58 2002/10/12 08:55:03 carstenklapp Exp $
+$Id: display.php,v 1.38 2002/09/15 20:17:58 rurban Exp $
+$Id: Template.php,v 1.46 2002/09/15 15:05:47 rurban Exp $
+$Id: WikiPlugin.php,v 1.27 2002/11/04 03:15:59 carstenklapp Exp $
+$Id: BlockParser.php,v 1.29 2002/11/25 22:25:49 dairiki Exp $
+$Id: InlineParser.php,v 1.19 2002/11/25 22:51:37 dairiki Exp $
+$Id: interwiki.php,v 1.23 2002/10/06 16:45:10 dairiki Exp $
+$Id: PageType.php,v 1.13 2002/09/04 20:39:47 dairiki Exp $
+-->
+</html>
